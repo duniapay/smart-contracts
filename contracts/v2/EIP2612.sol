@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-import { AbstractFiatTokenV2 } from "./AbstractFiatTokenV2.sol";
+import { AbstractCFATokenV2 } from "./AbstractCFATokenV2.sol";
 import { EIP712Domain } from "./EIP712Domain.sol";
 import { EIP712 } from "../util/EIP712.sol";
 
@@ -32,7 +32,7 @@ import { EIP712 } from "../util/EIP712.sol";
  * @title EIP-2612
  * @notice Provide internal implementation for gas-abstracted approvals
  */
-abstract contract EIP2612 is AbstractFiatTokenV2, EIP712Domain {
+abstract contract EIP2612 is AbstractCFATokenV2, EIP712Domain {
     // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)")
     bytes32
         public constant PERMIT_TYPEHASH = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
@@ -67,7 +67,7 @@ abstract contract EIP2612 is AbstractFiatTokenV2, EIP712Domain {
         bytes32 r,
         bytes32 s
     ) internal {
-        require(deadline >= now, "FiatTokenV2: permit is expired");
+        require(deadline >= now, "CFATokenV2: permit is expired");
 
         bytes memory data = abi.encode(
             PERMIT_TYPEHASH,

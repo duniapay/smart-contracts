@@ -1,10 +1,10 @@
-import { FiatTokenV2Instance } from "../../../@types/generated";
+import { CfaTokenV2Instance } from "../../../@types/generated";
 import { Signature, ecSign, strip0x } from "../../helpers";
 
 export interface TestParams {
-  getFiatToken: () => FiatTokenV2Instance;
+  getFiatToken: () => CfaTokenV2Instance;
   getDomainSeparator: () => string;
-  fiatTokenOwner: string;
+  cfaTokenOwner: string;
   accounts: Truffle.Accounts;
 }
 

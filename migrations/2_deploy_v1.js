@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const some = require("lodash/some");
 
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
+const CFATokenV1 = artifacts.require("CFATokenV1");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
 
 const THROWAWAY_ADDRESS = "0x0000000000000000000000000000000000000001";
 
@@ -55,12 +55,12 @@ module.exports = async (deployer, network) => {
   }
 
   console.log("Deploying implementation contract...");
-  await deployer.deploy(FiatTokenV1);
-  const fiatTokenV1 = await FiatTokenV1.deployed();
-  console.log("Deployed implementation contract at", FiatTokenV1.address);
+  await deployer.deploy(CFATokenV1);
+  const cfaTokenV1 = await CFATokenV1.deployed();
+  console.log("Deployed implementation contract at", CFATokenV1.address);
 
   console.log("Initializing implementation contract with dummy values...");
-  await fiatTokenV1.initialize(
+  await cfaTokenV1.initialize(
     "",
     "",
     "",
@@ -72,23 +72,23 @@ module.exports = async (deployer, network) => {
   );
 
   console.log("Deploying proxy contract...");
-  await deployer.deploy(FiatTokenProxy, FiatTokenV1.address);
-  const fiatTokenProxy = await FiatTokenProxy.deployed();
-  console.log("Deployed proxy contract at", FiatTokenProxy.address);
+  await deployer.deploy(CFATokenProxy, CFATokenV1.address);
+  const cfaTokenProxy = await CFATokenProxy.deployed();
+  console.log("Deployed proxy contract at", CFATokenProxy.address);
 
   console.log("Reassigning proxy contract admin...");
   // need to change admin first, or the call to initialize won't work
   // since admin can only call methods in the proxy, and not forwarded methods
-  await fiatTokenProxy.changeAdmin(proxyAdminAddress);
+  await cfaTokenProxy.changeAdmin(proxyAdminAddress);
 
   console.log("Initializing proxy contract...");
-  // Pretend that the proxy address is a FiatTokenV1 - this is fine because the
-  // proxy will forward all the calls to the FiatTokenV1 impl
-  const proxyAsV1 = await FiatTokenV1.at(FiatTokenProxy.address);
+  // Pretend that the proxy address is a CFATokenV1 - this is fine because the
+  // proxy will forward all the calls to the CFATokenV1 impl
+  const proxyAsV1 = await CFATokenV1.at(CFATokenProxy.address);
   await proxyAsV1.initialize(
-    "USD//C",
-    "USDC",
-    "USD",
+    "DuniaPay West Africa CFA Francs",
+    "cXOF",
+    "XOF",
     6,
     masterMinterAddress,
     pauserAddress,

@@ -18,8 +18,8 @@ const {
   proxyOwnerAccount,
   initializeTokenWithProxy,
   encodeCall,
-  FiatTokenV1,
-  UpgradedFiatToken,
+  CFATokenV1,
+  UpgradedCFAToken,
   UpgradedFiatTokenNewFields,
 } = require("./helpers/tokenTest");
 
@@ -97,7 +97,7 @@ function runTests(newToken, _accounts) {
     await checkVariables([token], [customVars]);
   });
 
-  it("nut008 shoud fail to update proxy storage if state-changing function called directly in FiatToken", async () => {
+  it("nut008 shoud fail to update proxy storage if state-changing function called directly in CFAToken", async () => {
     await rawToken.initialize(
       name,
       symbol,
@@ -119,11 +119,11 @@ function runTests(newToken, _accounts) {
   });
 
   it("nut009 should fail to call upgradeTo with non-adminAccount", async () => {
-    const upgradedToken = await UpgradedFiatToken.new();
+    const upgradedToken = await UpgradedCFAToken.new();
     await expectRevert(
       proxy.upgradeTo(upgradedToken.address, { from: masterMinterAccount })
     );
-    const finalToken = await FiatTokenV1.at(proxy.address);
+    const finalToken = await CFATokenV1.at(proxy.address);
     const implementation = await proxy.implementation({
       from: proxyOwnerAccount,
     });
@@ -145,7 +145,7 @@ function runTests(newToken, _accounts) {
         from: masterMinterAccount,
       })
     );
-    const finalToken = await FiatTokenV1.at(proxy.address);
+    const finalToken = await CFATokenV1.at(proxy.address);
     const implementation = await proxy.implementation({
       from: proxyOwnerAccount,
     });
@@ -217,4 +217,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken proxy negative", runTests);
+wrapTests("CFAToken proxy negative", runTests);

@@ -1,8 +1,8 @@
-// Address of the FiatToken Implementation
-const fiatTokenAddress = "0x0882477e7895bdc5cea7cb1552ed914ab157fe56";
+// Address of the CFAToken Implementation
+const cfaTokenAddress = "0x96a501B69A178D0031Dd7333AE829773220E514C";
 
-// Address of the FiatToken Proxy
-const fiatTokenProxyAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+// Address of the CFAToken Proxy
+const cfaTokenProxyAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
 
 // role addresses
 const MASTER_MINTER = 0x1500a138523709ce66c8b9abe678abc1b6c5a7b7;
@@ -15,18 +15,18 @@ const BLACKLISTER = 0x063d13783a0a2ce65b1ca00d9e897e6c8b1ec86b;
 // If replacing with real minters need to modify printMinterInfo
 const minters = ["0x0000", "0x0001"];
 
-const NAME = "USD//C";
-const SYMBOL = "USDC";
-const CURRENCY = "USD";
-const DECIMALS = 6;
+const NAME = "DuniaPay West Africa CFA Francs";
+const SYMBOL = "cXOF";
+const CURRENCY = "XOF";
+const DECIMALS = 8;
 const TOTALSUPPLY = 0;
 const PAUSED = false;
 
 // Name of current implementation artifact as stored in ./build/contracts/*.json
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
+const CFATokenV1 = artifacts.require("CFATokenV1");
 
 // Name of current proxy artifact as stored in ./build/contracts/*.json
-artifacts.require("FiatTokenProxy");
+artifacts.require("CFATokenProxy");
 
 //
 //
@@ -86,9 +86,9 @@ function print(name, actual, expected) {
 
 async function Validate() {
   console.log("Connecting to contract...");
-  await FiatTokenV1.at(fiatTokenAddress);
+  await CFATokenV1.at(cfaTokenAddress);
   console.log("Token found.");
-  const proxiedToken = await FiatTokenV1.at(fiatTokenProxyAddress);
+  const proxiedToken = await CFATokenV1.at(cfaTokenProxyAddress);
   console.log("Proxied token created.");
 
   // initialized needs to retrieved manually
@@ -96,7 +96,7 @@ async function Validate() {
   let initialized = slot8Data.substring(24, 26);
   print("init proxy", initialized, "01");
 
-  slot8Data = await asyncGetStorageAt(fiatTokenAddress, 8);
+  slot8Data = await asyncGetStorageAt(cfaTokenAddress, 8);
   initialized = slot8Data.substring(24, 26);
   print("init logic", initialized, "01");
 
@@ -123,7 +123,7 @@ async function Validate() {
     proxiedToken.address,
     implSlot
   );
-  print("implement", getAddressFromSlotData(implementation), fiatTokenAddress);
+  print("implement", getAddressFromSlotData(implementation), cfaTokenAddress);
 
   const admin = await asyncGetStorageAt(proxiedToken.address, adminSlot);
   print("upgrader", getAddressFromSlotData(admin), UPGRADER);

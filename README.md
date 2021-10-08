@@ -1,6 +1,6 @@
 # centre-tokens
 
-Fiat tokens on the [CENTRE](https://centre.io) network.
+CFA tokens on the [DUNIAPAY](https://duniapay.net) network.
 
 ## Setup
 
@@ -78,24 +78,23 @@ addresses of proxy admin, owner, master minter, blacklister, and pauser in
 accidental check-ins, `config.js` is in `.gitignore`.
 
 Run `yarn migrate --network NETWORK`, where NETWORK is either `mainnet` or
-`ropsten`.
+`alfajores`.
 
 ## Contracts
 
 The implementation uses 2 separate contracts - a proxy contract
-(`FiatTokenProxy.sol`) and an implementation contract (`FiatToken.sol`). This
+(`CFATokenProxy.sol`) and an implementation contract (`CFAToken.sol`). This
 allows upgrading the contract, as a new implementation contact can be deployed
 and the Proxy updated to point to it.
 
-### FiatToken
+### CFAToken
 
-The FiatToken offers a number of capabilities, which briefly are described
-below. There are more [detailed design docs](./doc/tokendesign.md) in the `doc`
-folder.
+The CFAToken offers a number of capabilities, which briefly are described below.
+There are more [detailed design docs](./doc/tokendesign.md) in the `doc` folder.
 
 ### ERC20 compatible
 
-The FiatToken implements the ERC20 interface.
+The CFAToken implements the ERC20 interface.
 
 ### Pausable
 

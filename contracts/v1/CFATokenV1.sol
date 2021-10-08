@@ -25,16 +25,16 @@
 pragma solidity 0.6.12;
 
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
-import { AbstractFiatTokenV1 } from "./AbstractFiatTokenV1.sol";
+import { AbstractCFATokenV1 } from "./AbstractCFATokenV1.sol";
 import { Ownable } from "./Ownable.sol";
 import { Pausable } from "./Pausable.sol";
 import { Blacklistable } from "./Blacklistable.sol";
 
 /**
- * @title FiatToken
+ * @title CFAToken
  * @dev ERC20 Token backed by fiat reserves
  */
-contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
+contract CFATokenV1 is AbstractCFATokenV1, Ownable, Pausable, Blacklistable {
     using SafeMath for uint256;
 
     string public name;
@@ -66,22 +66,22 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
         address newBlacklister,
         address newOwner
     ) public {
-        require(!initialized, "FiatToken: contract is already initialized");
+        require(!initialized, "CFAToken: contract is already initialized");
         require(
             newMasterMinter != address(0),
-            "FiatToken: new masterMinter is the zero address"
+            "CFAToken: new masterMinter is the zero address"
         );
         require(
             newPauser != address(0),
-            "FiatToken: new pauser is the zero address"
+            "CFAToken: new pauser is the zero address"
         );
         require(
             newBlacklister != address(0),
-            "FiatToken: new blacklister is the zero address"
+            "CFAToken: new blacklister is the zero address"
         );
         require(
             newOwner != address(0),
-            "FiatToken: new owner is the zero address"
+            "CFAToken: new owner is the zero address"
         );
 
         name = tokenName;
@@ -99,7 +99,7 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
      * @dev Throws if called by any account other than a minter
      */
     modifier onlyMinters() {
-        require(minters[msg.sender], "FiatToken: caller is not a minter");
+        require(minters[msg.sender], "CFAToken: caller is not a minter");
         _;
     }
 
@@ -118,13 +118,13 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
         notBlacklisted(_to)
         returns (bool)
     {
-        require(_to != address(0), "FiatToken: mint to the zero address");
-        require(_amount > 0, "FiatToken: mint amount not greater than 0");
+        require(_to != address(0), "CFAToken: mint to the zero address");
+        require(_amount > 0, "CFAToken: mint amount not greater than 0");
 
         uint256 mintingAllowedAmount = minterAllowed[msg.sender];
         require(
             _amount <= mintingAllowedAmount,
-            "FiatToken: mint amount exceeds minterAllowance"
+            "CFAToken: mint amount exceeds minterAllowance"
         );
 
         totalSupply_ = totalSupply_.add(_amount);
@@ -141,7 +141,7 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
     modifier onlyMasterMinter() {
         require(
             msg.sender == masterMinter,
-            "FiatToken: caller is not the masterMinter"
+            "CFAToken: caller is not the masterMinter"
         );
         _;
     }
@@ -351,8 +351,8 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
         notBlacklisted(msg.sender)
     {
         uint256 balance = balances[msg.sender];
-        require(_amount > 0, "FiatToken: burn amount not greater than 0");
-        require(balance >= _amount, "FiatToken: burn amount exceeds balance");
+        require(_amount > 0, "CFAToken: burn amount not greater than 0");
+        require(balance >= _amount, "CFAToken: burn amount exceeds balance");
 
         totalSupply_ = totalSupply_.sub(_amount);
         balances[msg.sender] = balance.sub(_amount);
@@ -363,7 +363,7 @@ contract FiatTokenV1 is AbstractFiatTokenV1, Ownable, Pausable, Blacklistable {
     function updateMasterMinter(address _newMasterMinter) external onlyOwner {
         require(
             _newMasterMinter != address(0),
-            "FiatToken: new masterMinter is the zero address"
+            "CFAToken: new masterMinter is the zero address"
         );
         masterMinter = _newMasterMinter;
         emit MasterMinterChanged(masterMinter);

@@ -11,10 +11,11 @@ available, but can only be called once per proxy.
 
 ## Deploying the implementation contract
 
-1. Deploy [FiatTokenV1](../contracts/FiatTokenV1.sol)
-2. Initialize the fields in FiatToken via the `initialize` method. The values
-   are not important, but this will stop anyone else initializing the roles and
-   trying to use it as a token or pass it off as a real CENTRE token.
+1. Deploy [CFATokenV1](../contracts/v1/CFATokenV1.sol)
+2. Initialize the fields in CFAToken via the `initialize` method. The values are
+   not important, but this will stop anyone else initializing the roles and
+   trying to use it as a token or pass it off as a real DUNIAPAY token.
+
    ```
    initialize(
           "",
@@ -27,13 +28,14 @@ available, but can only be called once per proxy.
           throwawayAddress
           )
    ```
-3. Verify that all fields in the FiatToken have been initialized correctly and
+
+3. Verify that all fields in the CFAToken have been initialized correctly and
    have the expected values. See [README.validate.md](../validate/validate.js).
 
-## Deploying a Proxy:
+## Deploying a Proxy
 
-1. Obtain addresses for the various contract roles from CENTRE ops. The keys for
-   these addresses will be stored offline. The address needed are:
+1. Obtain addresses for the various contract roles from DUNIAPAY ops. The keys
+   for these addresses will be stored offline. The address needed are:
 
    ```
    admin
@@ -46,9 +48,9 @@ available, but can only be called once per proxy.
    For details on what these roles can do, see the
    [Token Design Doc](tokendesign.md)
 
-2. Deploy [FiatTokenProxy](../contracts/FiatTokenProxy.sol), passing the address
-   of the deployed implementation contract to the constructor, which will
-   initialize the `_implementation` field.
+2. Deploy [CFATokenProxy](../contracts/v1/CFATokenProxy.sol), passing the
+   address of the deployed implementation contract to the constructor, which
+   will initialize the `_implementation` field.
 
 3. The `admin` of the proxy contract defaults to msg.sender. You must either
    change the `admin` now, or send the remaining transactions from a different
@@ -67,14 +69,14 @@ available, but can only be called once per proxy.
    it will run in the context of the Proxy contract, so the fields it is
    initializing will be stored it the storage of the Proxy. The values passed
    here are important, especially for the roles that will control the contract.
-   These addresses should be obtained from CENTRE ops, and the keys will be
+   These addresses should be obtained from DUNIAPAY ops, and the keys will be
    stored offline.
 
    ```
    initialize(
-          "USD//C",
-          "USDC",
-          "USD",
+          "cXOF",
+          "cXOF",
+          "CFA",
           6,
           masterMinterAddress,
           pauserAddress,

@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import { FiatTokenV2Instance } from "../../../@types/generated";
-import { Approval } from "../../../@types/generated/FiatTokenV2";
+import { CfaTokenV2Instance } from "../../../@types/generated";
+import { Approval } from "../../../@types/generated/CFATokenV2";
 import {
   ACCOUNTS_AND_KEYS,
   MAX_UINT256,
@@ -17,11 +17,11 @@ import {
 export function testPermit({
   getFiatToken,
   getDomainSeparator,
-  fiatTokenOwner,
+  cfaTokenOwner,
   accounts,
 }: TestParams): void {
   describe("permit", () => {
-    let fiatToken: FiatTokenV2Instance;
+    let cfaToken: CfaTokenV2Instance;
     let domainSeparator: string;
     const [alice, bob] = ACCOUNTS_AND_KEYS;
     const charlie = accounts[1];
@@ -36,18 +36,18 @@ export function testPermit({
     };
 
     beforeEach(async () => {
-      fiatToken = getFiatToken();
+      cfaToken = getFiatToken();
       domainSeparator = getDomainSeparator();
-      await fiatToken.configureMinter(fiatTokenOwner, 1000000e6, {
-        from: fiatTokenOwner,
+      await cfaToken.configureMinter(cfaTokenOwner, 1000000e6, {
+        from: cfaTokenOwner,
       });
-      await fiatToken.mint(permitParams.owner, initialBalance, {
-        from: fiatTokenOwner,
+      await cfaToken.mint(permitParams.owner, initialBalance, {
+        from: cfaTokenOwner,
       });
     });
 
     it("has the expected type hash", async () => {
-      expect(await fiatToken.PERMIT_TYPEHASH()).to.equal(permitTypeHash);
+      expect(await cfaToken.PERMIT_TYPEHASH()).to.equal(permitTypeHash);
     });
 
     it("grants allowance when a valid permit is given", async () => {
@@ -67,14 +67,12 @@ export function testPermit({
       );
 
       // check that the allowance is initially zero
-      expect((await fiatToken.allowance(owner, spender)).toNumber()).to.equal(
-        0
-      );
+      expect((await cfaToken.allowance(owner, spender)).toNumber()).to.equal(0);
       // check that the next nonce expected is zero
-      expect((await fiatToken.nonces(owner)).toNumber()).to.equal(0);
+      expect((await cfaToken.nonces(owner)).toNumber()).to.equal(0);
 
       // a third-party, Charlie (not Alice) submits the permit
-      let result = await fiatToken.permit(
+      let result = await cfaToken.permit(
         owner,
         spender,
         value,
@@ -86,7 +84,7 @@ export function testPermit({
       );
 
       // check that allowance is updated
-      expect((await fiatToken.allowance(owner, spender)).toNumber()).to.equal(
+      expect((await cfaToken.allowance(owner, spender)).toNumber()).to.equal(
         value
       );
 
@@ -98,7 +96,7 @@ export function testPermit({
       expect(log.args[2].toNumber()).to.equal(value);
 
       // check that the next nonce expected is now 1
-      expect((await fiatToken.nonces(owner)).toNumber()).to.equal(1);
+      expect((await cfaToken.nonces(owner)).toNumber()).to.equal(1);
 
       // increment nonce
       nonce = 1;
@@ -114,19 +112,12 @@ export function testPermit({
       ));
 
       // submit the permit
-      result = await fiatToken.permit(
-        owner,
-        spender,
-        value,
-        deadline,
-        v,
-        r,
-        s,
-        { from: charlie }
-      );
+      result = await cfaToken.permit(owner, spender, value, deadline, v, r, s, {
+        from: charlie,
+      });
 
       // check that allowance is updated
-      expect((await fiatToken.allowance(owner, spender)).toNumber()).to.equal(
+      expect((await cfaToken.allowance(owner, spender)).toNumber()).to.equal(
         1e6
       );
 
@@ -153,7 +144,7 @@ export function testPermit({
 
       // try to cheat by claiming the approved amount is double
       await expectRevert(
-        fiatToken.permit(
+        cfaToken.permit(
           owner,
           spender,
           value * 2, // pass incorrect value
@@ -184,7 +175,7 @@ export function testPermit({
       // try to cheat by submitting the permit that is signed by a
       // wrong person
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "invalid signature"
@@ -208,7 +199,7 @@ export function testPermit({
 
       // try to submit the permit that is expired
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "permit is expired"
@@ -229,11 +220,11 @@ export function testPermit({
         alice.key
       );
       // check that the next nonce expected is 0, not 1
-      expect((await fiatToken.nonces(owner)).toNumber()).to.equal(0);
+      expect((await cfaToken.nonces(owner)).toNumber()).to.equal(0);
 
       // try to submit the permit
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "invalid signature"
@@ -254,13 +245,13 @@ export function testPermit({
       );
 
       // submit the permit
-      await fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+      await cfaToken.permit(owner, spender, value, deadline, v, r, s, {
         from: charlie,
       });
 
       // try to submit the permit again
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "invalid signature"
@@ -281,7 +272,7 @@ export function testPermit({
       );
 
       // submit the permit
-      await fiatToken.permit(
+      await cfaToken.permit(
         owner,
         spender,
         value,
@@ -306,7 +297,7 @@ export function testPermit({
 
       // try to submit the permit again
       await expectRevert(
-        fiatToken.permit(
+        cfaToken.permit(
           owner,
           spender,
           1e6,
@@ -337,7 +328,7 @@ export function testPermit({
 
       // try to submit the permit with invalid approval parameters
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "approve to the zero address"
@@ -367,7 +358,7 @@ export function testPermit({
 
       // try to submit the transfer permit
       await expectRevert(
-        fiatToken.permit(from, to, value, validBefore, v, r, s, {
+        cfaToken.permit(from, to, value, validBefore, v, r, s, {
           from: charlie,
         }),
         "invalid signature"
@@ -388,11 +379,11 @@ export function testPermit({
       );
 
       // pause the contract
-      await fiatToken.pause({ from: fiatTokenOwner });
+      await cfaToken.pause({ from: cfaTokenOwner });
 
       // try to submit the permit
       await expectRevert(
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         }),
         "paused"
@@ -413,10 +404,10 @@ export function testPermit({
       );
 
       // owner is blacklisted
-      await fiatToken.blacklist(owner, { from: fiatTokenOwner });
+      await cfaToken.blacklist(owner, { from: cfaTokenOwner });
 
       const submitTx = () =>
-        fiatToken.permit(owner, spender, value, deadline, v, r, s, {
+        cfaToken.permit(owner, spender, value, deadline, v, r, s, {
           from: charlie,
         });
 
@@ -424,8 +415,8 @@ export function testPermit({
       await expectRevert(submitTx(), "account is blacklisted");
 
       // spender is blacklisted
-      await fiatToken.unBlacklist(owner, { from: fiatTokenOwner });
-      await fiatToken.blacklist(spender, { from: fiatTokenOwner });
+      await cfaToken.unBlacklist(owner, { from: cfaTokenOwner });
+      await cfaToken.blacklist(spender, { from: cfaTokenOwner });
 
       // try to submit the permit
       await expectRevert(submitTx(), "account is blacklisted");

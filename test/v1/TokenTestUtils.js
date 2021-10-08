@@ -4,19 +4,19 @@ const BN = require("bn.js");
 const Q = require("q");
 const BigNumber = require("bignumber.js");
 
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
-const UpgradedFiatToken = artifacts.require("UpgradedFiatToken");
+const CFATokenV1 = artifacts.require("CFATokenV1");
+const UpgradedCFAToken = artifacts.require("UpgradedCFAToken");
 const UpgradedFiatTokenNewFields = artifacts.require(
   "UpgradedFiatTokenNewFieldsTest"
 );
 const UpgradedFiatTokenNewFieldsNewLogic = artifacts.require(
-  "UpgradedFiatTokenNewFieldsNewLogicTest"
+  "UpgradedCFATokenNewFieldsNewLogicTest"
 );
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
 
-const name = "Sample Fiat Token";
-const symbol = "C-USD";
-const currency = "USD";
+const name = "Sample CFA Token";
+const symbol = "C-XOF";
+const currency = "XOF";
 const decimals = 2;
 const trueInStorageFormat = "0x01";
 const bigZero = new BN(0);
@@ -722,10 +722,10 @@ async function customInitializeTokenWithProxy(
   _blacklister,
   _owner
 ) {
-  const proxy = await FiatTokenProxy.new(rawToken.address, {
+  const proxy = await CFATokenProxy.new(rawToken.address, {
     from: proxyOwnerAccount,
   });
-  const proxiedToken = await FiatTokenV1.at(proxy.address);
+  const proxiedToken = await CFATokenV1.at(proxy.address);
   await proxiedToken.initialize(
     name,
     symbol,
@@ -751,7 +751,7 @@ async function upgradeTo(proxy, upgradedToken, proxyUpgraderAccount) {
     proxyUpgraderAccount = proxyOwnerAccount;
   }
   await proxy.upgradeTo(upgradedToken.address, { from: proxyUpgraderAccount });
-  const proxiedToken = await FiatTokenV1.at(proxy.address);
+  const proxiedToken = await CFATokenV1.at(proxy.address);
   assert.strictEqual(proxiedToken.address, proxy.address);
   return {
     proxy,
@@ -807,14 +807,14 @@ async function getInitializedV1(token) {
   return initialized;
 }
 
-// _contracts is an array of exactly two values: a FiatTokenV1 and a MintController
-// _customVars is an array of exactly two values: the expected state of the FiatTokenV1
+// _contracts is an array of exactly two values: a CFATokenV1 and a MintController
+// _customVars is an array of exactly two values: the expected state of the CFATokenV1
 // and the expected state of the MintController
 async function checkMINTp0(_contracts, _customVars) {
   assert.equal(_contracts.length, 2);
   assert.equal(_customVars.length, 2);
 
-  // the first is a FiatTokenV1
+  // the first is a CFATokenV1
   await checkVariables([_contracts[0]], [_customVars[0]]);
 
   // the second is a MintController
@@ -822,9 +822,9 @@ async function checkMINTp0(_contracts, _customVars) {
 }
 
 module.exports = {
-  FiatTokenV1,
-  FiatTokenProxy,
-  UpgradedFiatToken,
+  CFATokenV1,
+  CFATokenProxy,
+  UpgradedCFAToken,
   UpgradedFiatTokenNewFields,
   UpgradedFiatTokenNewFieldsNewLogic,
   name,

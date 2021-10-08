@@ -1,7 +1,7 @@
 {
   "name": "centre-tokens",
   "version": "1.0.0",
-  "description": "Fiat and non-fiat tokens part of the CENTRE network.",
+  "description": "CFA and non-fiat tokens part of the DUNIA PAYMENT network.",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -19,7 +19,8 @@
     "solhint": "solhint 'contracts/**/*.sol'",
     "precommit": "yarn typechain && yarn fmt && yarn typecheck && yarn lint && yarn solhint",
     "slither": "slither --solc-disable-warnings --disable-color --exclude-dependencies .",
-    "migrate": "truffle migrate --interactive"
+    "migrate": "truffle migrate --interactive --network alfajores",
+    "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,9 @@
     "url": "https://github.com/centrehq/centre-tokens/issues"
   },
   "homepage": "https://github.com/centrehq/centre-tokens#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@celo/contractkit": "^1.2.5"
+  },
   "devDependencies": {
     "@openzeppelin/contracts": "^3.1.0",
     "@truffle/hdwallet-provider": "^1.0.39",
@@ -62,6 +65,7 @@
     "prettier": "2.0.5",
     "prettier-plugin-solidity": "1.0.0-alpha.54",
     "q": "^1.5.1",
+    "sol-merger": "^3.1.0",
     "solc": "0.6.12",
     "solhint": "^3.1.0",
     "solidity-coverage": "^0.7.9",

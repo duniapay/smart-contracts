@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-import { FiatTokenV1 } from "../../v1/FiatTokenV1.sol";
+import { CFATokenV1 } from "../../v1/CFATokenV1.sol";
 import { Ownable } from "../../v1/Ownable.sol";
 
 /**
@@ -38,14 +38,14 @@ contract V2UpgraderHelper is Ownable {
 
     /**
      * @notice Constructor
-     * @param fiatTokenProxy    Address of the FiatTokenProxy contract
+     * @param cfaTokenProxy    Address of the CFATokenProxy contract
      */
-    constructor(address fiatTokenProxy) public Ownable() {
-        _proxy = fiatTokenProxy;
+    constructor(address cfaTokenProxy) public Ownable() {
+        _proxy = cfaTokenProxy;
     }
 
     /**
-     * @notice The address of the FiatTokenProxy contract
+     * @notice The address of the CFATokenProxy contract
      * @return Contract address
      */
     function proxy() external view returns (address) {
@@ -57,7 +57,7 @@ contract V2UpgraderHelper is Ownable {
      * @return name
      */
     function name() external view returns (string memory) {
-        return FiatTokenV1(_proxy).name();
+        return CFATokenV1(_proxy).name();
     }
 
     /**
@@ -65,7 +65,7 @@ contract V2UpgraderHelper is Ownable {
      * @return symbol
      */
     function symbol() external view returns (string memory) {
-        return FiatTokenV1(_proxy).symbol();
+        return CFATokenV1(_proxy).symbol();
     }
 
     /**
@@ -73,7 +73,7 @@ contract V2UpgraderHelper is Ownable {
      * @return decimals
      */
     function decimals() external view returns (uint8) {
-        return FiatTokenV1(_proxy).decimals();
+        return CFATokenV1(_proxy).decimals();
     }
 
     /**
@@ -81,7 +81,7 @@ contract V2UpgraderHelper is Ownable {
      * @return currency
      */
     function currency() external view returns (string memory) {
-        return FiatTokenV1(_proxy).currency();
+        return CFATokenV1(_proxy).currency();
     }
 
     /**
@@ -89,16 +89,16 @@ contract V2UpgraderHelper is Ownable {
      * @return masterMinter
      */
     function masterMinter() external view returns (address) {
-        return FiatTokenV1(_proxy).masterMinter();
+        return CFATokenV1(_proxy).masterMinter();
     }
 
     /**
      * @notice Call owner()
-     * @dev Renamed to fiatTokenOwner due to the existence of Ownable.owner()
+     * @dev Renamed to cfaTokenOwner due to the existence of Ownable.owner()
      * @return owner
      */
-    function fiatTokenOwner() external view returns (address) {
-        return FiatTokenV1(_proxy).owner();
+    function cfaTokenOwner() external view returns (address) {
+        return CFATokenV1(_proxy).owner();
     }
 
     /**
@@ -106,7 +106,7 @@ contract V2UpgraderHelper is Ownable {
      * @return pauser
      */
     function pauser() external view returns (address) {
-        return FiatTokenV1(_proxy).pauser();
+        return CFATokenV1(_proxy).pauser();
     }
 
     /**
@@ -114,7 +114,7 @@ contract V2UpgraderHelper is Ownable {
      * @return blacklister
      */
     function blacklister() external view returns (address) {
-        return FiatTokenV1(_proxy).blacklister();
+        return CFATokenV1(_proxy).blacklister();
     }
 
     /**
@@ -123,7 +123,7 @@ contract V2UpgraderHelper is Ownable {
      * @return balance
      */
     function balanceOf(address account) external view returns (uint256) {
-        return FiatTokenV1(_proxy).balanceOf(account);
+        return CFATokenV1(_proxy).balanceOf(account);
     }
 
     /**
@@ -138,7 +138,7 @@ contract V2UpgraderHelper is Ownable {
         address to,
         uint256 value
     ) external returns (bool) {
-        return FiatTokenV1(_proxy).transferFrom(from, to, value);
+        return CFATokenV1(_proxy).transferFrom(from, to, value);
     }
 
     /**

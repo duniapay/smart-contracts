@@ -1,6 +1,6 @@
 const wrapTests = require("./helpers/wrapTests");
 const {
-  FiatTokenV1,
+  CFATokenV1,
   minterAccount,
   masterMinterAccount,
   arbitraryAccount,
@@ -36,7 +36,7 @@ function runTests(_newToken, _accounts) {
   let proxy, token;
 
   beforeEach(async () => {
-    const rawToken = await FiatTokenV1.new();
+    const rawToken = await CFATokenV1.new();
     const tokenConfig = await initializeTokenWithProxy(rawToken);
     ({ proxy, token } = tokenConfig);
     assert.strictEqual(proxy.address, token.address);
@@ -198,4 +198,4 @@ function runTests(_newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken events", runTests);
+wrapTests("CFAToken events", runTests);

@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-contract FiatTokenUtil {
+contract CFATokenUtil {
     // (address,address,uint256,uint256,uint256,bytes32) = 20*2 + 32*4 = 168
     uint256 private constant _TRANSFER_PARAM_SIZE = 168;
     // (uint8,bytes32,bytes32) = 1 + 32*2 = 65
@@ -32,18 +32,18 @@ contract FiatTokenUtil {
     // keccak256("transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)")[0:4]
     bytes4 private constant _TRANSFER_WITH_AUTHORIZATION_SELECTOR = 0xe3ee160e;
 
-    address private _fiatToken;
+    address private _cfaToken;
 
     event TransferFailed(address indexed authorizer, bytes32 indexed nonce);
 
     /**
      * @notice Constructor
-     * @dev If FiatTokenProxy is used to hold state and delegate calls, the
+     * @dev If CFATokenProxy is used to hold state and delegate calls, the
      * proxy's address should be provided, not the implementation address
-     * @param fiatToken Address of the FiatToken contract
+     * @param cfaToken Address of the CFAToken contract
      */
-    constructor(address fiatToken) public {
-        _fiatToken = fiatToken;
+    constructor(address cfaToken) public {
+        _cfaToken = cfaToken;
     }
 
     /**
@@ -64,15 +64,15 @@ contract FiatTokenUtil {
         bool atomic
     ) external returns (bool) {
         uint256 num = params.length / _TRANSFER_PARAM_SIZE;
-        require(num > 0, "FiatTokenUtil: no transfer provided");
+        require(num > 0, "CFATokenUtil: no transfer provided");
         require(
             num * _TRANSFER_PARAM_SIZE == params.length,
-            "FiatTokenUtil: length of params is invalid"
+            "CFATokenUtil: length of params is invalid"
         );
         require(
             signatures.length / _SIGNATURE_SIZE == num &&
                 num * _SIGNATURE_SIZE == signatures.length,
-            "FiatTokenUtil: length of signatures is invalid"
+            "CFATokenUtil: length of signatures is invalid"
         );
 
         uint256 numSuccessful = 0;
@@ -98,7 +98,7 @@ contract FiatTokenUtil {
 
             // Call transferWithAuthorization with the extracted parameters
             // solhint-disable-next-line avoid-low-level-calls
-            (bool success, bytes memory returnData) = _fiatToken.call(
+            (bool success, bytes memory returnData) = _cfaToken.call(
                 abi.encodePacked(
                     _TRANSFER_WITH_AUTHORIZATION_SELECTOR,
                     fromTo,
@@ -164,7 +164,7 @@ contract FiatTokenUtil {
         // string: Error(string) selector[4] + string offset[32] + string
         // length[32] + string data[32] = 100
         if (returnData.length < 100) {
-            revert("FiatTokenUtil: call failed");
+            revert("CFATokenUtil: call failed");
         }
 
         // If the reason string exists, extract it, and bubble it up

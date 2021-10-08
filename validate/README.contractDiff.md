@@ -28,10 +28,10 @@ To run the script, type
 `node validate/contractDiff.js <filename1> <filename2> ... <filename3>`
 
 Where the `filename` is the location of source code downloaded from Etherscan.
-Copies of `FiatTokenProxy`, `FiatTokenV1`, and `MasterMinter` are included for
+Copies of `CFATokenProxy`, `CFATokenV1`, and `MasterMinter` are included for
 testing purposes. You can test them:
 
-`node validate/contractDiff.js validate/FiatTokenProxy.etherscan validate/FiatTokenV1.etherscan validate/MasterMinter.etherscan`
+`node validate/contractDiff.js validate/CFATokenProxy.etherscan validate/CFATokenV1.etherscan validate/MasterMinter.etherscan`
 
 # Finding code on Etherscan
 

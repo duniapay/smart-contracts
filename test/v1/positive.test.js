@@ -350,4 +350,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken positive", runTests);
+wrapTests("CFAToken positive", runTests);

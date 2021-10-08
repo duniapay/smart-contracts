@@ -24,13 +24,13 @@
 
 pragma solidity 0.6.12;
 
-import { FiatTokenV1 } from "../v1/FiatTokenV1.sol";
+import { CFATokenV1 } from "../v1/CFATokenV1.sol";
 
 /**
- * @title UpgradedFiatTokenNewFieldsNewLogicTest
+ * @title UpgradedCFATokenNewFieldsNewLogicTest
  * @dev ERC20 Token backed by fiat reserves
  */
-contract UpgradedFiatTokenNewFieldsNewLogicTest is FiatTokenV1 {
+contract UpgradedCFATokenNewFieldsNewLogicTest is CFATokenV1 {
     bool public newBool;
     address public newAddress;
     uint256 public newUint;

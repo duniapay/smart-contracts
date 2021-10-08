@@ -17,3 +17,4 @@ ganache-blockchain-log.txt
 yarn-error.log
 @types/generated/
 config.js
+networks.config.json

@@ -27,13 +27,13 @@ pragma solidity 0.6.12;
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Ownable } from "../../v1/Ownable.sol";
-import { FiatTokenV2 } from "../FiatTokenV2.sol";
-import { FiatTokenProxy } from "../../v1/FiatTokenProxy.sol";
+import { CFATokenV2 } from "../CFATokenV2.sol";
+import { CFATokenProxy } from "../../v1/CFATokenProxy.sol";
 import { V2UpgraderHelper } from "./V2UpgraderHelper.sol";
 
 /**
  * @title V2 Upgrader
- * @notice Performs USDC v2 upgrade, and runs a basic sanity test in a single
+ * @notice Performs CXOF v2 upgrade, and runs a basic sanity test in a single
  * atomic transaction, rolling back if any issues are found. This may be
  * overkill, but the peace of mind is worth the gas spent. By performing the
  * upgrade atomically, it ensures that there is no disruption of service if the
@@ -43,22 +43,22 @@ import { V2UpgraderHelper } from "./V2UpgraderHelper.sol";
 contract V2Upgrader is Ownable {
     using SafeMath for uint256;
 
-    FiatTokenProxy private _proxy;
-    FiatTokenV2 private _implementation;
+    CFATokenProxy private _proxy;
+    CFATokenV2 private _implementation;
     address private _newProxyAdmin;
     string private _newName;
     V2UpgraderHelper private _helper;
 
     /**
      * @notice Constructor
-     * @param proxy             FiatTokenProxy contract
-     * @param implementation    FiatTokenV2 implementation contract
+     * @param proxy             CFATokenProxy contract
+     * @param implementation    CFATokenV2 implementation contract
      * @param newProxyAdmin     Grantee of proxy admin role after upgrade
-     * @param newName           New ERC20 name (e.g. "USD//C" -> "USD Coin")
+     * @param newName           New ERC20 name (e.g. "CXOF" -> "Celo XOF")
      */
     constructor(
-        FiatTokenProxy proxy,
-        FiatTokenV2 implementation,
+        CFATokenProxy proxy,
+        CFATokenV2 implementation,
         address newProxyAdmin,
         string memory newName
     ) public Ownable() {
@@ -70,7 +70,7 @@ contract V2Upgrader is Ownable {
     }
 
     /**
-     * @notice The address of the FiatTokenProxy contract
+     * @notice The address of the CFATokenProxy contract
      * @return Contract address
      */
     function proxy() external view returns (address) {
@@ -78,7 +78,7 @@ contract V2Upgrader is Ownable {
     }
 
     /**
-     * @notice The address of the FiatTokenV2 implementation contract
+     * @notice The address of the CFATokenV2 implementation contract
      * @return Contract address
      */
     function implementation() external view returns (address) {
@@ -122,7 +122,7 @@ contract V2Upgrader is Ownable {
 
         // Check that this contract sufficient funds to run the tests
         uint256 contractBal = _helper.balanceOf(address(this));
-        require(contractBal >= 2e5, "V2Upgrader: 0.2 USDC needed");
+        require(contractBal >= 2e5, "V2Upgrader: 0.2 CXOF needed");
 
         uint256 callerBal = _helper.balanceOf(msg.sender);
 
@@ -131,7 +131,7 @@ contract V2Upgrader is Ownable {
         uint8 decimals = _helper.decimals();
         string memory currency = _helper.currency();
         address masterMinter = _helper.masterMinter();
-        address owner = _helper.fiatTokenOwner();
+        address owner = _helper.cfaTokenOwner();
         address pauser = _helper.pauser();
         address blacklister = _helper.blacklister();
 
@@ -142,7 +142,7 @@ contract V2Upgrader is Ownable {
         _proxy.changeAdmin(_newProxyAdmin);
 
         // Initialize V2 contract
-        FiatTokenV2 v2 = FiatTokenV2(address(_proxy));
+        CFATokenV2 v2 = CFATokenV2(address(_proxy));
         v2.initializeV2(_newName);
 
         // Sanity test
@@ -184,8 +184,8 @@ contract V2Upgrader is Ownable {
             "V2Upgrader: approve/transferFrom test failed"
         );
 
-        // Transfer any remaining USDC to the caller
-        withdrawUSDC();
+        // Transfer any remaining CXOF to the caller
+        withdrawCXOF();
 
         // Tear down
         _helper.tearDown();
@@ -193,15 +193,15 @@ contract V2Upgrader is Ownable {
     }
 
     /**
-     * @notice Withdraw any USDC in the contract
+     * @notice Withdraw any CXOF in the contract
      */
-    function withdrawUSDC() public onlyOwner {
-        IERC20 usdc = IERC20(address(_proxy));
-        uint256 balance = usdc.balanceOf(address(this));
+    function withdrawCXOF() public onlyOwner {
+        IERC20 cxof = IERC20(address(_proxy));
+        uint256 balance = cxof.balanceOf(address(this));
         if (balance > 0) {
             require(
-                usdc.transfer(msg.sender, balance),
-                "V2Upgrader: failed to withdraw USDC"
+                cxof.transfer(msg.sender, balance),
+                "V2Upgrader: failed to withdraw CXOF"
             );
         }
     }

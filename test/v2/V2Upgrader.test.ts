@@ -1,35 +1,35 @@
 import crypto from "crypto";
 import {
-  FiatTokenV1Instance,
-  FiatTokenV2Instance,
-  FiatTokenProxyInstance,
+  CfaTokenV1Instance,
+  CfaTokenV2Instance,
+  CfaTokenProxyInstance,
 } from "../../@types/generated";
 import { signTransferAuthorization } from "./GasAbstraction/helpers";
 import { MAX_UINT256, ACCOUNTS_AND_KEYS } from "../helpers/constants";
 import { hexStringFromBuffer, expectRevert } from "../helpers";
 
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
-const FiatTokenV1_1 = artifacts.require("FiatTokenV1_1");
-const FiatTokenV2 = artifacts.require("FiatTokenV2");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
+const CfaTokenV1 = artifacts.require("CFATokenV1");
+const CfaTokenV1_1 = artifacts.require("CFATokenV1_1");
+const CfaTokenV2 = artifacts.require("CFATokenV2");
 const V2Upgrader = artifacts.require("V2Upgrader");
 
 contract("V2Upgrader", (accounts) => {
-  let fiatTokenProxy: FiatTokenProxyInstance;
-  let proxyAsV1: FiatTokenV1Instance;
-  let proxyAsV2: FiatTokenV2Instance;
-  let v1Implementation: FiatTokenV1Instance;
-  let v2Implementation: FiatTokenV2Instance;
+  let CfaTokenProxy: CfaTokenProxyInstance;
+  let proxyAsV1: CfaTokenV1Instance;
+  let proxyAsV2: CfaTokenV2Instance;
+  let v1Implementation: CfaTokenV1Instance;
+  let v2Implementation: CfaTokenV2Instance;
   let originalProxyAdmin: string;
   const minter = accounts[9];
 
   beforeEach(async () => {
-    fiatTokenProxy = await FiatTokenProxy.deployed();
-    proxyAsV1 = await FiatTokenV1.at(fiatTokenProxy.address);
-    proxyAsV2 = await FiatTokenV2.at(fiatTokenProxy.address);
-    v1Implementation = await FiatTokenV1.deployed();
-    v2Implementation = await FiatTokenV2.deployed();
-    originalProxyAdmin = await fiatTokenProxy.admin();
+    CfaTokenProxy = await CFATokenProxy.deployed();
+    proxyAsV1 = await CfaTokenV1.at(CfaTokenProxy.address);
+    proxyAsV2 = await CfaTokenV2.at(CfaTokenProxy.address);
+    v1Implementation = await CfaTokenV1.deployed();
+    v2Implementation = await CfaTokenV2.deployed();
+    originalProxyAdmin = await CfaTokenProxy.admin();
 
     await proxyAsV1.configureMinter(minter, 2e5, {
       from: await proxyAsV1.masterMinter(),
@@ -44,19 +44,19 @@ contract("V2Upgrader", (accounts) => {
       const upgrader = await V2Upgrader.deployed();
       const upgraderOwner = await upgrader.owner();
 
-      expect(await upgrader.proxy()).to.equal(fiatTokenProxy.address);
+      expect(await upgrader.proxy()).to.equal(CfaTokenProxy.address);
       expect(await upgrader.implementation()).to.equal(
         v2Implementation.address
       );
       expect(await upgrader.helper()).not.to.be.empty;
       expect(await upgrader.newProxyAdmin()).to.equal(originalProxyAdmin);
-      expect(await upgrader.newName()).to.equal("USD Coin");
+      expect(await upgrader.newName()).to.equal("Celo XOF");
 
-      // Transfer 0.2 USDC to the contract
+      // Transfer 0.2 CXOF to the contract
       await proxyAsV1.transfer(upgrader.address, 2e5, { from: minter });
 
       // Transfer admin role to the contract
-      await fiatTokenProxy.changeAdmin(upgrader.address, {
+      await CfaTokenProxy.changeAdmin(upgrader.address, {
         from: originalProxyAdmin,
       });
 
@@ -64,15 +64,15 @@ contract("V2Upgrader", (accounts) => {
       await upgrader.upgrade({ from: upgraderOwner });
 
       // The proxy admin role is transferred back to originalProxyAdmin
-      expect(await fiatTokenProxy.admin()).to.equal(originalProxyAdmin);
+      expect(await CfaTokenProxy.admin()).to.equal(originalProxyAdmin);
 
       // The implementation is updated to V2
-      expect(await fiatTokenProxy.implementation()).to.equal(
+      expect(await CfaTokenProxy.implementation()).to.equal(
         v2Implementation.address
       );
 
       // Test that things work as expected
-      expect(await proxyAsV2.name()).to.equal("USD Coin");
+      expect(await proxyAsV2.name()).to.equal("Celo XOF");
       expect((await proxyAsV2.balanceOf(upgrader.address)).toNumber()).to.equal(
         0
       );
@@ -148,25 +148,25 @@ contract("V2Upgrader", (accounts) => {
     });
 
     it("reverts if there is an error", async () => {
-      fiatTokenProxy = await FiatTokenProxy.new(v1Implementation.address, {
+      CfaTokenProxy = await CFATokenProxy.new(v1Implementation.address, {
         from: originalProxyAdmin,
       });
-      const fiatTokenV1_1 = await FiatTokenV1_1.new();
+      const CfaToken = await CfaTokenV1_1.new();
       const upgraderOwner = accounts[0];
 
       const upgrader = await V2Upgrader.new(
-        fiatTokenProxy.address,
-        fiatTokenV1_1.address, // provide V1.1 implementation instead of V2
+        CfaTokenProxy.address,
+        CfaToken.address, // provide V1.1 implementation instead of V2
         originalProxyAdmin,
-        "USD Coin",
+        "Celo XOF",
         { from: upgraderOwner }
       );
 
-      // Transfer 0.2 USDC to the contract
+      // Transfer 0.2 CXOF to the contract
       await proxyAsV1.transfer(upgrader.address, 2e5, { from: minter });
 
       // Transfer admin role to the contract
-      await fiatTokenProxy.changeAdmin(upgrader.address, {
+      await CfaTokenProxy.changeAdmin(upgrader.address, {
         from: originalProxyAdmin,
       });
 
@@ -174,10 +174,10 @@ contract("V2Upgrader", (accounts) => {
       await expectRevert(upgrader.upgrade({ from: upgraderOwner }), "revert");
 
       // The proxy admin role is not transferred
-      expect(await fiatTokenProxy.admin()).to.equal(upgrader.address);
+      expect(await CfaTokenProxy.admin()).to.equal(upgrader.address);
 
       // The implementation is left unchanged
-      expect(await fiatTokenProxy.implementation()).to.equal(
+      expect(await CfaTokenProxy.implementation()).to.equal(
         v1Implementation.address
       );
     });
@@ -185,23 +185,23 @@ contract("V2Upgrader", (accounts) => {
 
   describe("abortUpgrade", () => {
     it("transfers proxy admin role to newProxyAdmin and self-destructs", async () => {
-      fiatTokenProxy = await FiatTokenProxy.new(v1Implementation.address, {
+      CfaTokenProxy = await CFATokenProxy.new(v1Implementation.address, {
         from: originalProxyAdmin,
       });
       const upgraderOwner = accounts[0];
       const upgrader = await V2Upgrader.new(
-        fiatTokenProxy.address,
+        CfaTokenProxy.address,
         v2Implementation.address,
         originalProxyAdmin,
-        "USD Coin",
+        "Celo XOF",
         { from: upgraderOwner }
       );
 
-      // Transfer 0.2 USDC to the contract
+      // Transfer 0.2 CXOF to the contract
       await proxyAsV1.transfer(upgrader.address, 2e5, { from: minter });
 
       // Transfer admin role to the contract
-      await fiatTokenProxy.changeAdmin(upgrader.address, {
+      await CfaTokenProxy.changeAdmin(upgrader.address, {
         from: originalProxyAdmin,
       });
 
@@ -209,10 +209,10 @@ contract("V2Upgrader", (accounts) => {
       await upgrader.abortUpgrade({ from: upgraderOwner });
 
       // The proxy admin role is transferred back to originalProxyAdmin
-      expect(await fiatTokenProxy.admin()).to.equal(originalProxyAdmin);
+      expect(await CfaTokenProxy.admin()).to.equal(originalProxyAdmin);
 
       // The implementation is left unchanged
-      expect(await fiatTokenProxy.implementation()).to.equal(
+      expect(await CfaTokenProxy.implementation()).to.equal(
         v1Implementation.address
       );
     });

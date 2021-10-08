@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import {
-  FiatTokenV2Instance,
-  FiatTokenUtilInstance,
+  CfaTokenV2Instance,
+  CfaTokenUtilInstance,
 } from "../../../@types/generated";
 import { ACCOUNTS_AND_KEYS, MAX_UINT256 } from "../../helpers/constants";
 import {
@@ -14,18 +14,18 @@ import {
 import { signTransferAuthorization, TestParams } from "./helpers";
 import { TransactionRawLog } from "../../../@types/TransactionRawLog";
 
-const FiatTokenUtil = artifacts.require("FiatTokenUtil");
+const CFATokenUtil = artifacts.require("CFATokenUtil");
 const ContractThatReverts = artifacts.require("ContractThatReverts");
 
 export function testTransferWithMultipleAuthorizations({
   getFiatToken,
   getDomainSeparator,
-  fiatTokenOwner,
+  cfaTokenOwner,
   accounts,
 }: TestParams): void {
   describe("transferWithMultipleAuthorizations", () => {
-    let fiatToken: FiatTokenV2Instance;
-    let fiatTokenUtil: FiatTokenUtilInstance;
+    let cfaToken: CfaTokenV2Instance;
+    let cfaTokenUtil: CfaTokenUtilInstance;
     let domainSeparator: string;
     const [alice, bob] = ACCOUNTS_AND_KEYS;
     const charlie = accounts[1];
@@ -41,28 +41,28 @@ export function testTransferWithMultipleAuthorizations({
     };
 
     beforeEach(async () => {
-      fiatToken = getFiatToken();
-      fiatTokenUtil = await FiatTokenUtil.new(fiatToken.address);
+      cfaToken = getFiatToken();
+      cfaTokenUtil = await CFATokenUtil.new(cfaToken.address);
       domainSeparator = getDomainSeparator();
       nonce = hexStringFromBuffer(crypto.randomBytes(32));
-      await fiatToken.configureMinter(fiatTokenOwner, 1000000e6, {
-        from: fiatTokenOwner,
+      await cfaToken.configureMinter(cfaTokenOwner, 1000000e6, {
+        from: cfaTokenOwner,
       });
-      await fiatToken.mint(transferParams.from, initialBalance, {
-        from: fiatTokenOwner,
+      await cfaToken.mint(transferParams.from, initialBalance, {
+        from: cfaTokenOwner,
       });
     });
 
     it("reverts if no transfer is provided", async () => {
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations("0x", "0x", true, {
+        cfaTokenUtil.transferWithMultipleAuthorizations("0x", "0x", true, {
           from: charlie,
         }),
         "no transfer provided"
       );
     });
 
-    it("reverts if the FiatToken contract is paused", async () => {
+    it("reverts if the CFAToken contract is paused", async () => {
       const { from, to, value, validAfter, validBefore } = transferParams;
       const { v, r, s } = signTransferAuthorization(
         from,
@@ -75,11 +75,11 @@ export function testTransferWithMultipleAuthorizations({
         alice.key
       );
 
-      // pause FiatToken
-      await fiatToken.pause({ from: fiatTokenOwner });
+      // pause CFAToken
+      await cfaToken.pause({ from: cfaTokenOwner });
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce)
           ),
@@ -107,7 +107,7 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce)
           ) + "00", // add one more byte
@@ -135,7 +135,7 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce)
           ),
@@ -165,14 +165,14 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check initial balance
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(10e6);
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(0);
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(10e6);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(0);
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
 
       // a third-party, Charlie (not Alice) submits the signed authorization
-      const result = await fiatTokenUtil.transferWithMultipleAuthorizations(
+      const result = await cfaTokenUtil.transferWithMultipleAuthorizations(
         prepend0x(packParams(from, to, value, validAfter, validBefore, nonce)),
         prepend0x(packSignatures(v, r, s)),
         true,
@@ -180,10 +180,10 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check that the balances are updated
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(
         initialBalance - value
       );
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(value);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(value);
 
       // check that AuthorizationUsed event is emitted
       const log0 = result.receipt.rawLogs[0] as TransactionRawLog;
@@ -195,7 +195,7 @@ export function testTransferWithMultipleAuthorizations({
 
       // check that Transfer event is emitted
       const log1 = result.receipt.rawLogs[1] as TransactionRawLog;
-      expect(log1.address).to.equal(fiatToken.address);
+      expect(log1.address).to.equal(cfaToken.address);
       expect(log1.topics[0]).to.equal(
         web3.utils.keccak256("Transfer(address,address,uint256)")
       );
@@ -206,7 +206,7 @@ export function testTransferWithMultipleAuthorizations({
       ).to.equal(value);
 
       // check that the authorization state is now true
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(true);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(true);
     });
 
     it("can execute multiple transfers", async () => {
@@ -243,15 +243,15 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check initial balance
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(10e6);
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(0);
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(10e6);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(0);
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
-      expect(await fiatToken.authorizationState(from, nonce2)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce2)).to.equal(false);
 
       // a third-party, Charlie (not Alice) submits the signed authorization
-      const result = await fiatTokenUtil.transferWithMultipleAuthorizations(
+      const result = await cfaTokenUtil.transferWithMultipleAuthorizations(
         prepend0x(
           packParams(from, to, value, validAfter, validBefore, nonce) +
             packParams(from, to2, value2, validAfter, validBefore, nonce2)
@@ -265,11 +265,11 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check that the balances are updated
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(
         initialBalance - value - value2
       );
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(value);
-      expect((await fiatToken.balanceOf(to2)).toNumber()).to.equal(value2);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(value);
+      expect((await cfaToken.balanceOf(to2)).toNumber()).to.equal(value2);
 
       // check that AuthorizationUsed event for transfer 1 is emitted
       const log0 = result.receipt.rawLogs[0] as TransactionRawLog;
@@ -281,7 +281,7 @@ export function testTransferWithMultipleAuthorizations({
 
       // check that Transfer event for transfer 1 is emitted
       const log1 = result.receipt.rawLogs[1] as TransactionRawLog;
-      expect(log1.address).to.equal(fiatToken.address);
+      expect(log1.address).to.equal(cfaToken.address);
       expect(log1.topics[0]).to.equal(
         web3.utils.keccak256("Transfer(address,address,uint256)")
       );
@@ -301,7 +301,7 @@ export function testTransferWithMultipleAuthorizations({
 
       // check that Transfer event for transfer 2 is emitted
       const log3 = result.receipt.rawLogs[3] as TransactionRawLog;
-      expect(log3.address).to.equal(fiatToken.address);
+      expect(log3.address).to.equal(cfaToken.address);
       expect(log3.topics[0]).to.equal(
         web3.utils.keccak256("Transfer(address,address,uint256)")
       );
@@ -312,8 +312,8 @@ export function testTransferWithMultipleAuthorizations({
       ).to.equal(value2);
 
       // check that the authorization state is now true
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(true);
-      expect(await fiatToken.authorizationState(from, nonce2)).to.equal(true);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(true);
+      expect(await cfaToken.authorizationState(from, nonce2)).to.equal(true);
     });
 
     it("does not revert if one of the transfers fail, but atomic is false", async () => {
@@ -350,15 +350,15 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check initial balance
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(10e6);
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(0);
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(10e6);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(0);
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
-      expect(await fiatToken.authorizationState(from, nonce2)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce2)).to.equal(false);
 
       // a third-party, Charlie (not Alice) submits the signed authorization
-      const result = await fiatTokenUtil.transferWithMultipleAuthorizations(
+      const result = await cfaTokenUtil.transferWithMultipleAuthorizations(
         prepend0x(
           packParams(from, to, value, validAfter, validBefore, nonce) +
             packParams(from, to2, value2, validAfter, validBefore, nonce2)
@@ -372,11 +372,11 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       // check that the balances are updated
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(
         initialBalance - value
       );
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(value);
-      expect((await fiatToken.balanceOf(to2)).toNumber()).to.equal(0);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(value);
+      expect((await cfaToken.balanceOf(to2)).toNumber()).to.equal(0);
 
       // check that AuthorizationUsed event for transfer 1 is emitted
       const log0 = result.receipt.rawLogs[0] as TransactionRawLog;
@@ -388,7 +388,7 @@ export function testTransferWithMultipleAuthorizations({
 
       // check that Transfer event for transfer 1 is emitted
       const log1 = result.receipt.rawLogs[1] as TransactionRawLog;
-      expect(log1.address).to.equal(fiatToken.address);
+      expect(log1.address).to.equal(cfaToken.address);
       expect(log1.topics[0]).to.equal(
         web3.utils.keccak256("Transfer(address,address,uint256)")
       );
@@ -400,7 +400,7 @@ export function testTransferWithMultipleAuthorizations({
 
       // check that TransferFailed event for transfer 2 is emitted
       const log2 = result.receipt.rawLogs[2] as TransactionRawLog;
-      expect(log2.address).to.equal(fiatTokenUtil.address);
+      expect(log2.address).to.equal(cfaTokenUtil.address);
       expect(log2.topics[0]).to.equal(
         web3.utils.keccak256("TransferFailed(address,bytes32)")
       );
@@ -442,7 +442,7 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce) +
               packParams(from, to2, value2, validAfter, validBefore, nonce2)
@@ -460,7 +460,7 @@ export function testTransferWithMultipleAuthorizations({
 
     it("reverts with a generic message if the call fails with a reason string", async () => {
       const reverter = await ContractThatReverts.new();
-      fiatTokenUtil = await FiatTokenUtil.new(reverter.address);
+      cfaTokenUtil = await CFATokenUtil.new(reverter.address);
 
       const { from, to, value, validAfter, validBefore } = transferParams;
 
@@ -478,7 +478,7 @@ export function testTransferWithMultipleAuthorizations({
       await reverter.setReason("something went wrong");
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce)
           ),
@@ -492,7 +492,7 @@ export function testTransferWithMultipleAuthorizations({
 
     it("reverts with a generic message if the call fails with no reason string", async () => {
       const reverter = await ContractThatReverts.new();
-      fiatTokenUtil = await FiatTokenUtil.new(reverter.address);
+      cfaTokenUtil = await CFATokenUtil.new(reverter.address);
 
       const { from, to, value, validAfter, validBefore } = transferParams;
 
@@ -508,7 +508,7 @@ export function testTransferWithMultipleAuthorizations({
       );
 
       await expectRevert(
-        fiatTokenUtil.transferWithMultipleAuthorizations(
+        cfaTokenUtil.transferWithMultipleAuthorizations(
           prepend0x(
             packParams(from, to, value, validAfter, validBefore, nonce)
           ),

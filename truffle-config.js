@@ -3,15 +3,27 @@ require("ts-node/register/transpile-only");
 // Fix Typescript callsite reporting
 Object.defineProperty(Error, "prepareStackTrace", { writable: false });
 
-const HDWalletProvider = require("@truffle/hdwallet-provider");
+// INIT PROVIDER USING CONTRACT KIT
+const Kit = require("@celo/contractkit");
+
 const fs = require("fs");
 const path = require("path");
 
 // Read config file if it exists
-let config = { MNEMONIC: "", INFURA_KEY: "" };
+let config = { MNEMONIC: "", FIGMENT_KEY: "", PRIVATE_KEY: "", NODE_URL: "" };
 if (fs.existsSync(path.join(__dirname, "config.js"))) {
   config = require("./config.js");
 }
+const nodeUrl = config.NODE_URL;
+console.log("Node url", nodeUrl);
+const kit = Kit.newKit(nodeUrl);
+
+// AWAIT WRAPPER FOR ASYNC FUNC
+async function awaitWrapper() {
+  kit.connection.addAccount(config.PRIVATE_KEY); // ADDING ACCOUNT HERE
+}
+
+awaitWrapper();
 
 module.exports = {
   compilers: {
@@ -37,12 +49,14 @@ module.exports = {
       network_id: "*", // Match any network id
     },
     mainnet: {
-      provider: infuraProvider("mainnet"),
-      network_id: 1,
+      provider: kit.connection.web3.currentProvider, // CeloProvider
+      network_id: 42220,
     },
-    ropsten: {
-      provider: infuraProvider("ropsten"),
-      network_id: 3,
+    alfajores: {
+      provider: kit.connection.web3.currentProvider, // CeloProvider
+      network_id: 44787, // latest Alfajores network id
+      gasPrice: 2 * 10 ** 8,
+      gas: 8000000,
     },
   },
   mocha: {
@@ -51,20 +65,3 @@ module.exports = {
   },
   plugins: ["solidity-coverage"],
 };
-
-function infuraProvider(network) {
-  return () => {
-    if (!config.MNEMONIC) {
-      console.error("A valid MNEMONIC must be provided in config.js");
-      process.exit(1);
-    }
-    if (!config.INFURA_KEY) {
-      console.error("A valid INFURA_KEY must be provided in config.js");
-      process.exit(1);
-    }
-    return new HDWalletProvider(
-      config.MNEMONIC,
-      `https://${network}.infura.io/v3/${config.INFURA_KEY}`
-    );
-  };
-}

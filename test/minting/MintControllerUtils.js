@@ -40,8 +40,8 @@ async function getActualMintControllerState(mintController) {
   return new MintControllerState(null, {}, minterManager);
 }
 
-// Deploys a FiatTokenV1 with a MintController contract as the masterMinter.
-// Uses the same workflow we would do in production - first deploy FiatToken then set the masterMinter.
+// Deploys a CFATokenV1 with a MintController contract as the masterMinter.
+// Uses the same workflow we would do in production - first deploy CFAToken then set the masterMinter.
 async function initializeTokenWithProxyAndMintController(
   rawToken,
   MintControllerArtifact

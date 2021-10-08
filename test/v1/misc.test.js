@@ -11,8 +11,8 @@ const {
   pauserAccount,
   initializeTokenWithProxy,
   getInitializedV1,
-  FiatTokenV1,
-  FiatTokenProxy,
+  CFATokenV1,
+  CFATokenProxy,
 } = require("./helpers/tokenTest");
 
 const maxAmount =
@@ -714,10 +714,10 @@ function runTests(newToken, _accounts) {
 
   it("ms046 initialized should be 0 before initialization", async () => {
     const rawToken = await newToken();
-    const newProxy = await FiatTokenProxy.new(rawToken.address, {
+    const newProxy = await CFATokenProxy.new(rawToken.address, {
       from: arbitraryAccount,
     });
-    const token = await FiatTokenV1.at(newProxy.address);
+    const token = await CFATokenV1.at(newProxy.address);
     const initialized = await getInitializedV1(token);
     assert.strictEqual("0x00", initialized);
   });
@@ -880,4 +880,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken misc", runTests);
+wrapTests("CFAToken misc", runTests);

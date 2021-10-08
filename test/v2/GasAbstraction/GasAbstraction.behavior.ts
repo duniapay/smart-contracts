@@ -1,4 +1,4 @@
-import { FiatTokenV2Instance } from "../../../@types/generated";
+import { CfaTokenV2Instance } from "../../../@types/generated";
 import { TestParams } from "./helpers";
 import { testTransferWithAuthorization } from "./testTransferWithAuthorization";
 import { testCancelAuthorization } from "./testCancelAuthorization";
@@ -7,16 +7,16 @@ import { testTransferWithMultipleAuthorizations } from "./testTransferWithMultip
 import { testReceiveWithAuthorization } from "./testReceiveWithAuthorization";
 
 export function hasGasAbstraction(
-  getFiatToken: () => FiatTokenV2Instance,
+  getFiatToken: () => CfaTokenV2Instance,
   getDomainSeparator: () => string,
-  fiatTokenOwner: string,
+  cfaTokenOwner: string,
   accounts: Truffle.Accounts
 ): void {
   describe("GasAbstraction", () => {
     const testParams: TestParams = {
       getFiatToken,
       getDomainSeparator,
-      fiatTokenOwner,
+      cfaTokenOwner,
       accounts,
     };
 

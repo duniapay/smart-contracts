@@ -26,8 +26,8 @@ const {
   proxyOwnerAccount,
   initializeTokenWithProxy,
   upgradeTo,
-  UpgradedFiatToken,
-  FiatTokenV1,
+  UpgradedCFAToken,
+  CFATokenV1,
   getAdmin,
 } = require("./helpers/tokenTest");
 
@@ -36,7 +36,7 @@ function runTests(_newToken, accounts) {
   let proxy, token;
 
   beforeEach(async () => {
-    const rawToken = await FiatTokenV1.new();
+    const rawToken = await CFATokenV1.new();
     const tokenConfig = await initializeTokenWithProxy(rawToken);
     ({ proxy, token } = tokenConfig);
     assert.strictEqual(proxy.address, token.address);
@@ -629,7 +629,7 @@ function runTests(_newToken, accounts) {
     const initialBalance = await token.balanceOf(accounts[2]);
     assert.isTrue(new BN(initialBalance).eqn(200));
 
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(proxy, newRawToken);
     const newProxiedToken = tokenConfig.token;
     const newToken = newProxiedToken;
@@ -699,7 +699,7 @@ function runTests(_newToken, accounts) {
     const initialBalance = await token.balanceOf(accounts[2]);
     assert.isTrue(new BN(initialBalance).eqn(200));
 
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(proxy, newRawToken, address1);
     const newProxiedToken = tokenConfig.token;
     const newToken = newProxiedToken;

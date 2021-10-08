@@ -20,8 +20,8 @@ const {
   upgradeTo,
   encodeCall,
   validateTransferEvent,
-  FiatTokenProxy,
-  UpgradedFiatToken,
+  CFATokenProxy,
+  UpgradedCFAToken,
   UpgradedFiatTokenNewFields,
   UpgradedFiatTokenNewFieldsNewLogic,
   getAdmin,
@@ -49,7 +49,7 @@ function runTests(newToken, _accounts) {
     await token.mint(arbitraryAccount, mintAmount, { from: minterAccount });
     await token.transfer(pauserAccount, mintAmount, { from: arbitraryAccount });
 
-    const upgradedToken = await UpgradedFiatToken.new();
+    const upgradedToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(
       proxy,
       upgradedToken,
@@ -161,7 +161,7 @@ function runTests(newToken, _accounts) {
 
   it("upt008 should deploy upgraded version of contract with new data fields and without previous deployment and ensure new fields correct", async () => {
     const upgradedToken = await UpgradedFiatTokenNewFields.new();
-    const newProxy = await FiatTokenProxy.new(upgradedToken.address, {
+    const newProxy = await CFATokenProxy.new(upgradedToken.address, {
       from: proxyOwnerAccount,
     });
     const proxiedToken = await UpgradedFiatTokenNewFields.at(newProxy.address);
@@ -215,7 +215,7 @@ function runTests(newToken, _accounts) {
 
   it("upt010 should deploy upgraded version of contract with new data fields and logic without previous deployment and ensure new logic works, and new fields correct", async () => {
     const upgradedToken = await UpgradedFiatTokenNewFieldsNewLogic.new();
-    const newProxy = await FiatTokenProxy.new(upgradedToken.address, {
+    const newProxy = await CFATokenProxy.new(upgradedToken.address, {
       from: proxyOwnerAccount,
     });
     const proxiedToken = await UpgradedFiatTokenNewFieldsNewLogic.at(
@@ -289,7 +289,7 @@ function runTests(newToken, _accounts) {
     await token.mint(arbitraryAccount, mintAmount + 1, { from: minterAccount });
     await token.transfer(pauserAccount, mintAmount, { from: arbitraryAccount });
 
-    const upgradedToken = await UpgradedFiatToken.new();
+    const upgradedToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(
       proxy,
       upgradedToken,
@@ -321,7 +321,7 @@ function runTests(newToken, _accounts) {
 
   it("upt006 should upgrade while paused and upgraded contract should be paused as a result; then unpause should unpause contract", async () => {
     await token.pause({ from: pauserAccount });
-    const upgradedToken = await UpgradedFiatToken.new();
+    const upgradedToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(
       proxy,
       upgradedToken,
@@ -444,7 +444,7 @@ function runTests(newToken, _accounts) {
   });
 
   it("upt014 should upgradeTo while new logic is blacklisted", async () => {
-    const upgradedToken = await UpgradedFiatToken.new();
+    const upgradedToken = await UpgradedCFAToken.new();
     await token.blacklist(upgradedToken.address, { from: blacklisterAccount });
 
     const tokenConfig = await upgradeTo(
@@ -461,4 +461,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken proxy positive", runTests);
+wrapTests("CFAToken proxy positive", runTests);

@@ -1,9 +1,9 @@
 import BN from "bn.js";
-import { FiatTokenProxyInstance } from "../../@types/generated";
+import { CfaTokenProxyInstance } from "../../@types/generated";
 
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
-const FiatTokenV1_1 = artifacts.require("FiatTokenV1_1");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
+const CFATokenV1 = artifacts.require("CFATokenV1");
+const CFATokenV1_1 = artifacts.require("CFATokenV1_1");
 
 export function usesOriginalStorageSlotPositions<
   T extends Truffle.ContractInstance
@@ -17,7 +17,7 @@ export function usesOriginalStorageSlotPositions<
   accounts: Truffle.Accounts;
 }): void {
   describe("uses original storage slot positions", () => {
-    const [name, symbol, currency, decimals] = ["USD Coin", "USDC", "USD", 6];
+    const [name, symbol, currency, decimals] = ["Celo XOF", "CXOF", "XOF", 6];
     const [mintAllowance, minted, transferred, allowance] = [
       1000e6,
       100e6,
@@ -37,15 +37,15 @@ export function usesOriginalStorageSlotPositions<
       charlie,
     ] = accounts;
 
-    let fiatToken: T;
-    let proxy: FiatTokenProxyInstance;
+    let cfaToken: T;
+    let proxy: CfaTokenProxyInstance;
 
     beforeEach(async () => {
-      fiatToken = await Contract.new();
-      proxy = await FiatTokenProxy.new(fiatToken.address);
+      cfaToken = await Contract.new();
+      proxy = await CFATokenProxy.new(cfaToken.address);
       await proxy.changeAdmin(proxyAdmin);
 
-      const proxyAsFiatTokenV1 = await FiatTokenV1.at(proxy.address);
+      const proxyAsFiatTokenV1 = await CFATokenV1.at(proxy.address);
       await proxyAsFiatTokenV1.initialize(
         name,
         symbol,
@@ -67,7 +67,7 @@ export function usesOriginalStorageSlotPositions<
       await proxyAsFiatTokenV1.pause({ from: pauser });
 
       if (version >= 1.1) {
-        const proxyAsFiatTokenV1_1 = await FiatTokenV1_1.at(proxy.address);
+        const proxyAsFiatTokenV1_1 = await CFATokenV1_1.at(proxy.address);
         await proxyAsFiatTokenV1_1.updateRescuer(rescuer, {
           from: owner,
         });
@@ -100,7 +100,7 @@ export function usesOriginalStorageSlotPositions<
       // slot 5 - symbol
       expect(parseString(slots[5])).to.equal(symbol);
 
-      // slot 6 - decimals
+      // slot  - decimals
       expect(parseUint(slots[6]).toNumber()).to.equal(decimals);
 
       // slot 7 - currency

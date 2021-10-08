@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  *
- * Copyright (c) 2018 zOS Global Limited.
+ * Copyright (c) 2018-2020 CENTRE SECZ
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,37 @@
 
 pragma solidity 0.6.12;
 
-import { FiatTokenV1 } from "../v1/FiatTokenV1.sol";
+import { CFATokenV2 } from "./CFATokenV2.sol";
+
+// solhint-disable func-name-mixedcase
 
 /**
- * @title UpgradedFiatToken
- * @dev ERC20 Token backed by fiat reserves
+ * @title CFAToken V2.1
+ * @notice ERC20 Token backed by fiat reserves, version 2.1
  */
-contract UpgradedFiatToken is FiatTokenV1 {
+contract CFATokenV2_1 is CFATokenV2 {
+    /**
+     * @notice Initialize v2.1
+     * @param lostAndFound  The address to which the locked funds are sent
+     */
+    function initializeV2_1(address lostAndFound) external {
+        // solhint-disable-next-line reason-string
+        require(_initializedVersion == 1);
 
+        uint256 lockedAmount = balances[address(this)];
+        if (lockedAmount > 0) {
+            _transfer(address(this), lostAndFound, lockedAmount);
+        }
+        blacklisted[address(this)] = true;
+
+        _initializedVersion = 2;
+    }
+
+    /**
+     * @notice Version string for the EIP712 domain separator
+     * @return Version string
+     */
+    function version() external view returns (string memory) {
+        return "2";
+    }
 }

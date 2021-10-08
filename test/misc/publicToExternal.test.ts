@@ -13,7 +13,7 @@ const ContractWithExternalFunctions = artifacts.require(
 const ContractThatCallsPublicFunctions = artifacts.require(
   "ContractThatCallsPublicFunctions"
 );
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
 
 contract("public to external", (accounts) => {
   describe("changing access modifier from public to external", () => {
@@ -56,7 +56,7 @@ contract("public to external", (accounts) => {
     it("does not affect existing contracts' ability to call via a proxy", async () => {
       // deploy a proxy contract and have it pointed at the contract with public
       // functions
-      const proxy = await FiatTokenProxy.new(
+      const proxy = await CFATokenProxy.new(
         contractWithPublicFunctions.address,
         { from: accounts[0] }
       );

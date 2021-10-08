@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
-import "contracts/FiatTokenV1.sol";
+import "contracts/CFATokenV1.sol";
 
-contract Test is FiatTokenV1 {
+contract Test is CFATokenV1 {
     //Note: These are special addresses used by echidna––don't change.
     address testerAddr = 0x00a329c0648769a73afac7f9381e08fb43dbea70;
     address otherAddr = 0x67518339e369ab3d591d3569ab0a0d83b2ff5198;

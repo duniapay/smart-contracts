@@ -293,7 +293,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
   }
 }
 
-// File: contracts/FiatTokenProxy.sol
+// File: contracts/CFATokenProxy.sol
 
 /**
 * Copyright CENTRE SECZ 2018
@@ -320,10 +320,10 @@ pragma solidity ^0.4.24;
 
 
 /**
- * @title FiatTokenProxy
- * @dev This contract proxies FiatToken calls and enables FiatToken upgrades
+ * @title CFATokenProxy
+ * @dev This contract proxies CFAToken calls and enables CFAToken upgrades
 */
-contract FiatTokenProxy is AdminUpgradeabilityProxy {
+contract CFATokenProxy is AdminUpgradeabilityProxy {
     constructor(address _implementation) public AdminUpgradeabilityProxy(_implementation) {
     }
 }

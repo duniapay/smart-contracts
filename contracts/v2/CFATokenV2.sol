@@ -24,18 +24,18 @@
 
 pragma solidity 0.6.12;
 
-import { FiatTokenV1_1 } from "../v1.1/FiatTokenV1_1.sol";
-import { AbstractFiatTokenV2 } from "./AbstractFiatTokenV2.sol";
+import { CFATokenV1_1 } from "../v1.1/CFATokenV1_1.sol";
+import { AbstractCFATokenV2 } from "./AbstractCFATokenV2.sol";
 import { EIP712 } from "../util/EIP712.sol";
 import { EIP712Domain } from "./EIP712Domain.sol";
 import { EIP3009 } from "./EIP3009.sol";
 import { EIP2612 } from "./EIP2612.sol";
 
 /**
- * @title FiatToken V2
+ * @title CFAToken V2
  * @notice ERC20 Token backed by fiat reserves, version 2
  */
-contract FiatTokenV2 is FiatTokenV1_1, EIP3009, EIP2612 {
+contract CFATokenV2 is CFATokenV1_1, EIP3009, EIP2612 {
     uint8 internal _initializedVersion;
 
     /**

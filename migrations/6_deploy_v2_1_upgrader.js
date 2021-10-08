@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const some = require("lodash/some");
 
-const FiatTokenV2_1 = artifacts.require("FiatTokenV2_1");
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
+const CFATokenV2_1 = artifacts.require("CFATokenV2_1");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
 const V2_1Upgrader = artifacts.require("V2_1Upgrader");
 
 let proxyAdminAddress = "";
@@ -23,21 +23,21 @@ module.exports = async (deployer, network) => {
   if (some(["development", "coverage"], (v) => network.includes(v))) {
     // DO NOT USE THESE ADDRESSES IN PRODUCTION
     proxyAdminAddress = "0x2F560290FEF1B3Ada194b6aA9c40aa71f8e95598";
-    proxyContractAddress = (await FiatTokenProxy.deployed()).address;
+    proxyContractAddress = (await CFATokenProxy.deployed()).address;
     lostAndFoundAddress = "0x610Bb1573d1046FCb8A70Bbbd395754cD57C2b60";
   }
   proxyContractAddress =
-    proxyContractAddress || (await FiatTokenProxy.deployed()).address;
+    proxyContractAddress || (await CFATokenProxy.deployed()).address;
 
   if (!lostAndFoundAddress) {
     throw new Error("LOST_AND_FOUND_ADDRESS must be provided in config.js");
   }
 
-  const fiatTokenV2_1 = await FiatTokenV2_1.deployed();
+  const CfaTokenV2_1 = await CFATokenV2_1.deployed();
 
   console.log(`Proxy Admin:     ${proxyAdminAddress}`);
-  console.log(`FiatTokenProxy:  ${proxyContractAddress}`);
-  console.log(`FiatTokenV2_1:   ${fiatTokenV2_1.address}`);
+  console.log(`CFATokenProxy:  ${proxyContractAddress}`);
+  console.log(`CFATokenV2_1:   ${CfaTokenV2_1.address}`);
   console.log(`Lost & Found:    ${lostAndFoundAddress.address}`);
 
   if (!proxyAdminAddress) {
@@ -49,7 +49,7 @@ module.exports = async (deployer, network) => {
   const v2_1Upgrader = await deployer.deploy(
     V2_1Upgrader,
     proxyContractAddress,
-    fiatTokenV2_1.address,
+    CfaTokenV2_1.address,
     proxyAdminAddress,
     lostAndFoundAddress
   );

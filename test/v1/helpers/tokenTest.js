@@ -4,19 +4,19 @@ const _ = require("lodash");
 const BN = require("bn.js");
 const Q = require("q");
 
-const FiatTokenV1 = artifacts.require("FiatTokenV1");
-const UpgradedFiatToken = artifacts.require("UpgradedFiatToken");
+const CFATokenV1 = artifacts.require("CFATokenV1");
+const UpgradedCFAToken = artifacts.require("UpgradedCFAToken");
 const UpgradedFiatTokenNewFields = artifacts.require(
   "UpgradedFiatTokenNewFieldsTest"
 );
 const UpgradedFiatTokenNewFieldsNewLogic = artifacts.require(
-  "UpgradedFiatTokenNewFieldsNewLogicTest"
+  "UpgradedCFATokenNewFieldsNewLogicTest"
 );
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
 
-const name = "Sample Fiat Token";
-const symbol = "C-USD";
-const currency = "USD";
+const name = "Sample CFA Token";
+const symbol = "C-XOF";
+const currency = "XOF";
 const decimals = 2;
 const trueInStorageFormat = "0x01";
 const bigZero = new BN(0);
@@ -868,10 +868,10 @@ async function customInitializeTokenWithProxy(
   _blacklister,
   _owner
 ) {
-  const proxy = await FiatTokenProxy.new(rawToken.address, {
+  const proxy = await CFATokenProxy.new(rawToken.address, {
     from: proxyOwnerAccount,
   });
-  const proxiedToken = await FiatTokenV1.at(proxy.address);
+  const proxiedToken = await CFATokenV1.at(proxy.address);
   await proxiedToken.initialize(
     name,
     symbol,
@@ -897,7 +897,7 @@ async function upgradeTo(proxy, upgradedToken, proxyUpgraderAccount) {
     proxyUpgraderAccount = proxyOwnerAccount;
   }
   await proxy.upgradeTo(upgradedToken.address, { from: proxyUpgraderAccount });
-  const proxiedToken = await FiatTokenV1.at(proxy.address);
+  const proxiedToken = await CFATokenV1.at(proxy.address);
   assert.strictEqual(proxiedToken.address, proxy.address);
   return {
     proxy,
@@ -960,9 +960,9 @@ async function getInitializedV1(token) {
 }
 
 module.exports = {
-  FiatTokenV1,
-  FiatTokenProxy,
-  UpgradedFiatToken,
+  CFATokenV1,
+  CFATokenProxy,
+  UpgradedCFAToken,
   UpgradedFiatTokenNewFields,
   UpgradedFiatTokenNewFieldsNewLogic,
   name,

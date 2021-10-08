@@ -24,17 +24,18 @@
 
 pragma solidity 0.6.12;
 
-import {
-    AdminUpgradeabilityProxy
-} from "../upgradeability/AdminUpgradeabilityProxy.sol";
+import { AbstractCFATokenV1 } from "../v1/AbstractCFATokenV1.sol";
 
-/**
- * @title FiatTokenProxy
- * @dev This contract proxies FiatToken calls and enables FiatToken upgrades
- */
-contract FiatTokenProxy is AdminUpgradeabilityProxy {
-    constructor(address implementationContract)
-        public
-        AdminUpgradeabilityProxy(implementationContract)
-    {}
+abstract contract AbstractCFATokenV2 is AbstractCFATokenV1 {
+    function _increaseAllowance(
+        address owner,
+        address spender,
+        uint256 increment
+    ) internal virtual;
+
+    function _decreaseAllowance(
+        address owner,
+        address spender,
+        uint256 decrement
+    ) internal virtual;
 }

@@ -2,9 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const some = require("lodash/some");
 
-const FiatTokenV2 = artifacts.require("FiatTokenV2");
-const FiatTokenProxy = artifacts.require("FiatTokenProxy");
-const FiatTokenUtil = artifacts.require("FiatTokenUtil");
+const CFATokenV2 = artifacts.require("CFATokenV2");
+const CFATokenProxy = artifacts.require("CFATokenProxy");
+const CFATokenUtil = artifacts.require("CFATokenUtil");
 
 const THROWAWAY_ADDRESS = "0x0000000000000000000000000000000000000001";
 
@@ -20,20 +20,20 @@ module.exports = async (deployer, network) => {
     !proxyContractAddress ||
     some(["development", "coverage"], (v) => network.includes(v))
   ) {
-    proxyContractAddress = (await FiatTokenProxy.deployed()).address;
+    proxyContractAddress = (await CFATokenProxy.deployed()).address;
   }
 
-  console.log(`FiatTokenProxy: ${proxyContractAddress}`);
+  console.log(`CFATokenProxy: ${proxyContractAddress}`);
 
-  console.log("Deploying FiatTokenV2 implementation contract...");
-  await deployer.deploy(FiatTokenV2);
+  console.log("Deploying CFATokenV2 implementation contract...");
+  await deployer.deploy(CFATokenV2);
 
-  const fiatTokenV2 = await FiatTokenV2.deployed();
-  console.log("Deployed FiatTokenV2 at", fiatTokenV2.address);
+  const cfaTokenV2 = await CFATokenV2.deployed();
+  console.log("Deployed CFATokenV2 at", cfaTokenV2.address);
   console.log(
-    "Initializing FiatTokenV2 implementation contract with dummy values..."
+    "Initializing CFATokenV2 implementation contract with dummy values..."
   );
-  await fiatTokenV2.initialize(
+  await cfaTokenV2.initialize(
     "",
     "",
     "",
@@ -43,12 +43,12 @@ module.exports = async (deployer, network) => {
     THROWAWAY_ADDRESS,
     THROWAWAY_ADDRESS
   );
-  await fiatTokenV2.initializeV2("");
+  await cfaTokenV2.initializeV2("");
 
-  console.log("Deploying FiatTokenUtil contract...");
-  const fiatTokenUtil = await deployer.deploy(
-    FiatTokenUtil,
+  console.log("Deploying CFATokenUtil contract...");
+  const cfaTokenUtil = await deployer.deploy(
+    CFATokenUtil,
     proxyContractAddress
   );
-  console.log("Deployed FiatTokenUtil at", fiatTokenUtil.address);
+  console.log("Deployed CFATokenUtil at", cfaTokenUtil.address);
 };

@@ -1,6 +1,6 @@
 const MintController = artifacts.require("minting/MintController");
 const MasterMinter = artifacts.require("minting/MasterMinter");
-const FiatToken = artifacts.require("FiatTokenV1");
+const CFAToken = artifacts.require("CFATokenV1");
 
 const tokenUtils = require("../v1/TokenTestUtils.js");
 const newBigNumber = tokenUtils.newBigNumber;
@@ -654,7 +654,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       { from: Accounts.mintOwnerAccount }
     );
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -689,7 +689,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -720,7 +720,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       { from: Accounts.mintOwnerAccount }
     );
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -745,7 +745,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -768,7 +768,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       { from: Accounts.mintOwnerAccount }
     );
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -799,7 +799,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -824,7 +824,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
   });
 
   it("bt045 constructor - minterManager.isMinter[ALL] is false", async function () {
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
 
@@ -842,7 +842,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
   });
 
   it("bt046 constructor - minterManager.minterAllowance[ALL] = 0", async function () {
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
 
@@ -870,7 +870,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -908,7 +908,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -979,7 +979,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1016,7 +1016,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1081,7 +1081,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1109,7 +1109,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1257,7 +1257,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       { from: Accounts.mintOwnerAccount }
     );
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -1289,7 +1289,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const isMinter = await minterManager.isMinter(Accounts.minterAccount);
@@ -1321,7 +1321,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1355,7 +1355,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(
@@ -1393,7 +1393,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
       from: Accounts.controller1Account,
     });
 
-    const minterManager = await FiatToken.at(
+    const minterManager = await CFAToken.at(
       await mintController.getMinterManager()
     );
     const minterAllowance = await minterManager.minterAllowance(

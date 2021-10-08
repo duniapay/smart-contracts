@@ -1,6 +1,6 @@
 const MintController = artifacts.require("minting/MintController");
 const MasterMinter = artifacts.require("minting/MasterMinter");
-const FiatToken = artifacts.require("FiatTokenV1");
+const CFAToken = artifacts.require("CFATokenV1");
 
 const tokenUtils = require("../v1/TokenTestUtils");
 const newBigNumber = tokenUtils.newBigNumber;
@@ -176,7 +176,7 @@ async function run_MINT_tests(newToken, MintControllerArtifact) {
   });
 
   it("arg011 setMinterManager(newToken) works", async function () {
-    const newToken = await FiatToken.new();
+    const newToken = await CFAToken.new();
     await mintController.setMinterManager(newToken.address, {
       from: Accounts.mintOwnerAccount,
     });

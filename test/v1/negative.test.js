@@ -14,7 +14,7 @@ const {
   initializeTokenWithProxy,
   customInitializeTokenWithProxy,
   upgradeTo,
-  UpgradedFiatToken,
+  UpgradedCFAToken,
 } = require("./helpers/tokenTest");
 
 const amount = 100;
@@ -901,7 +901,7 @@ function runTests(newToken, _accounts) {
 
   it("nt054 should fail to transferOwnership when sender is not owner", async () => {
     // Create upgraded token
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(proxy, newRawToken);
     const newProxiedToken = tokenConfig.token;
     const newToken = newProxiedToken;
@@ -1027,4 +1027,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken negative", runTests);
+wrapTests("CFAToken negative", runTests);

@@ -37,7 +37,7 @@ function runTests(newToken, _accounts) {
   });
 
   // sanity check for pausable
-  it("abi004 FiatToken pause() is public", async () => {
+  it("abi004 CFAToken pause() is public", async () => {
     const badData = functionSignature("pause()");
     const tx = new Transaction({
       nonce: web3.utils.toHex(
@@ -115,8 +115,8 @@ function runTests(newToken, _accounts) {
     await expectRevert(sendRawTransaction(raw));
   });
 
-  it("abi043 FiatTokenProxy constructor is not a function", async () => {
-    const badData = functionSignature("FiatTokenProxy()");
+  it("abi043 CFATokenProxy constructor is not a function", async () => {
+    const badData = functionSignature("CFATokenProxy()");
     const tx = new Transaction({
       nonce: web3.utils.toHex(
         await web3.eth.getTransactionCount(pauserAccount)
@@ -228,8 +228,8 @@ function runTests(newToken, _accounts) {
     await expectRevert(sendRawTransaction(raw));
   });
 
-  it("abi041 FiatToken constructor is not a function", async () => {
-    const badData = functionSignature("FiatToken()");
+  it("abi041 CFAToken constructor is not a function", async () => {
+    const badData = functionSignature("CFAToken()");
     const tx = new Transaction({
       nonce: web3.utils.toHex(
         await web3.eth.getTransactionCount(pauserAccount)
@@ -281,4 +281,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken ABI hacking", runTests);
+wrapTests("CFAToken ABI hacking", runTests);

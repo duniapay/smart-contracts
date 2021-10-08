@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { FiatTokenV2Instance } from "../../../@types/generated";
+import { CfaTokenV2Instance } from "../../../@types/generated";
 import { ACCOUNTS_AND_KEYS, MAX_UINT256 } from "../../helpers/constants";
 import { expectRevert, hexStringFromBuffer } from "../../helpers";
 import {
@@ -12,28 +12,28 @@ import {
 export function testCancelAuthorization({
   getFiatToken,
   getDomainSeparator,
-  fiatTokenOwner,
+  cfaTokenOwner,
   accounts,
 }: TestParams): void {
   describe("cancelAuthorization", () => {
-    let fiatToken: FiatTokenV2Instance;
+    let cfaToken: CfaTokenV2Instance;
     let domainSeparator: string;
     const [alice, bob] = ACCOUNTS_AND_KEYS;
     const charlie = accounts[1];
     let nonce: string;
 
     beforeEach(async () => {
-      fiatToken = getFiatToken();
+      cfaToken = getFiatToken();
       domainSeparator = getDomainSeparator();
       nonce = hexStringFromBuffer(crypto.randomBytes(32));
-      await fiatToken.configureMinter(fiatTokenOwner, 1000000e6, {
-        from: fiatTokenOwner,
+      await cfaToken.configureMinter(cfaTokenOwner, 1000000e6, {
+        from: cfaTokenOwner,
       });
-      await fiatToken.mint(alice.address, 10e6, { from: fiatTokenOwner });
+      await cfaToken.mint(alice.address, 10e6, { from: cfaTokenOwner });
     });
 
     it("has the expected type hash", async () => {
-      expect(await fiatToken.CANCEL_AUTHORIZATION_TYPEHASH()).to.equal(
+      expect(await cfaToken.CANCEL_AUTHORIZATION_TYPEHASH()).to.equal(
         cancelAuthorizationTypeHash
       );
     });
@@ -66,10 +66,10 @@ export function testCancelAuthorization({
       );
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
 
       // cancel the authorization
-      await fiatToken.cancelAuthorization(
+      await cfaToken.cancelAuthorization(
         from,
         nonce,
         cancellation.v,
@@ -79,11 +79,11 @@ export function testCancelAuthorization({
       );
 
       // check that the authorization state is now true
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(true);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(true);
 
       // attempt to use the canceled authorization
       await expectRevert(
-        fiatToken.transferWithAuthorization(
+        cfaToken.transferWithAuthorization(
           from,
           to,
           value,
@@ -119,7 +119,7 @@ export function testCancelAuthorization({
       );
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
 
       // create cancellation
       const cancellation = signCancelAuthorization(
@@ -131,7 +131,7 @@ export function testCancelAuthorization({
 
       // cancel the authorization
       await expectRevert(
-        fiatToken.cancelAuthorization(
+        cfaToken.cancelAuthorization(
           from,
           nonce,
           cancellation.v,
@@ -143,10 +143,10 @@ export function testCancelAuthorization({
       );
 
       // check that the authorization state is still false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
 
       // authorization should not have been canceled
-      await fiatToken.transferWithAuthorization(
+      await cfaToken.transferWithAuthorization(
         from,
         to,
         value,
@@ -180,7 +180,7 @@ export function testCancelAuthorization({
       );
 
       // use the authorization
-      await fiatToken.transferWithAuthorization(
+      await cfaToken.transferWithAuthorization(
         from,
         to,
         value,
@@ -203,7 +203,7 @@ export function testCancelAuthorization({
 
       // try to cancel the authorization that's already used
       await expectRevert(
-        fiatToken.cancelAuthorization(
+        cfaToken.cancelAuthorization(
           from,
           nonce,
           cancellation.v,
@@ -225,7 +225,7 @@ export function testCancelAuthorization({
       );
 
       // submit the cancellation
-      await fiatToken.cancelAuthorization(
+      await cfaToken.cancelAuthorization(
         alice.address,
         nonce,
         cancellation.v,
@@ -236,7 +236,7 @@ export function testCancelAuthorization({
 
       // try to submit the same cancellation again
       await expectRevert(
-        fiatToken.cancelAuthorization(
+        cfaToken.cancelAuthorization(
           alice.address,
           nonce,
           cancellation.v,
@@ -258,11 +258,11 @@ export function testCancelAuthorization({
       );
 
       // pause the contract
-      await fiatToken.pause({ from: fiatTokenOwner });
+      await cfaToken.pause({ from: cfaTokenOwner });
 
       // try to submit the cancellation
       await expectRevert(
-        fiatToken.cancelAuthorization(alice.address, nonce, v, r, s, {
+        cfaToken.cancelAuthorization(alice.address, nonce, v, r, s, {
           from: charlie,
         }),
         "paused"

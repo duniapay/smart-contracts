@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-import { AbstractFiatTokenV2 } from "./AbstractFiatTokenV2.sol";
+import { AbstractCFATokenV2 } from "./AbstractCFATokenV2.sol";
 import { EIP712Domain } from "./EIP712Domain.sol";
 import { EIP712 } from "../util/EIP712.sol";
 
@@ -34,7 +34,7 @@ import { EIP712 } from "../util/EIP712.sol";
  * @dev Contracts that inherit from this must wrap these with publicly
  * accessible functions, optionally adding modifiers where necessary
  */
-abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
+abstract contract EIP3009 is AbstractCFATokenV2, EIP712Domain {
     // keccak256("TransferWithAuthorization(address from,address to,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)")
     bytes32
         public constant TRANSFER_WITH_AUTHORIZATION_TYPEHASH = 0x7c7c6cdb67a18743f49ec6fa9b35f50d52ed05cbed4cc592e13b44501c1a2267;
@@ -110,7 +110,7 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
         );
         require(
             EIP712.recover(DOMAIN_SEPARATOR, v, r, s, data) == from,
-            "FiatTokenV2: invalid signature"
+            "CFATokenV2: invalid signature"
         );
 
         _markAuthorizationAsUsed(from, nonce);
@@ -142,7 +142,7 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
         bytes32 r,
         bytes32 s
     ) internal {
-        require(to == msg.sender, "FiatTokenV2: caller must be the payee");
+        require(to == msg.sender, "CFATokenV2: caller must be the payee");
         _requireValidAuthorization(from, nonce, validAfter, validBefore);
 
         bytes memory data = abi.encode(
@@ -156,7 +156,7 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
         );
         require(
             EIP712.recover(DOMAIN_SEPARATOR, v, r, s, data) == from,
-            "FiatTokenV2: invalid signature"
+            "CFATokenV2: invalid signature"
         );
 
         _markAuthorizationAsUsed(from, nonce);
@@ -187,7 +187,7 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
         );
         require(
             EIP712.recover(DOMAIN_SEPARATOR, v, r, s, data) == authorizer,
-            "FiatTokenV2: invalid signature"
+            "CFATokenV2: invalid signature"
         );
 
         _authorizationStates[authorizer][nonce] = true;
@@ -205,7 +205,7 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
     {
         require(
             !_authorizationStates[authorizer][nonce],
-            "FiatTokenV2: authorization is used or canceled"
+            "CFATokenV2: authorization is used or canceled"
         );
     }
 
@@ -222,11 +222,8 @@ abstract contract EIP3009 is AbstractFiatTokenV2, EIP712Domain {
         uint256 validAfter,
         uint256 validBefore
     ) private view {
-        require(
-            now > validAfter,
-            "FiatTokenV2: authorization is not yet valid"
-        );
-        require(now < validBefore, "FiatTokenV2: authorization is expired");
+        require(now > validAfter, "CFATokenV2: authorization is not yet valid");
+        require(now < validBefore, "CFATokenV2: authorization is expired");
         _requireUnusedAuthorization(authorizer, nonce);
     }
 

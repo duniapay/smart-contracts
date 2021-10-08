@@ -24,18 +24,13 @@
 
 pragma solidity 0.6.12;
 
-import { AbstractFiatTokenV1 } from "../v1/AbstractFiatTokenV1.sol";
+import { CFATokenV1 } from "../v1/CFATokenV1.sol";
+import { Rescuable } from "./Rescuable.sol";
 
-abstract contract AbstractFiatTokenV2 is AbstractFiatTokenV1 {
-    function _increaseAllowance(
-        address owner,
-        address spender,
-        uint256 increment
-    ) internal virtual;
+/**
+ * @title CFATokenV1_1
+ * @dev ERC20 Token backed by fiat reserves
+ */
+contract CFATokenV1_1 is CFATokenV1, Rescuable {
 
-    function _decreaseAllowance(
-        address owner,
-        address spender,
-        uint256 decrement
-    ) internal virtual;
 }

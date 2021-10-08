@@ -1,13 +1,13 @@
-# CENTRE Fiat Token
+# DUNIAPAY CFA Token
 
-The CENTRE Fiat Token contract is an ERC-20 compatible token. It allows
+The DUNIAPAY CFA Token contract is an ERC-20 compatible token. It allows
 minting/burning of tokens by multiple entities, pausing all activity, freezing
 of individual addresses, and a way to upgrade the contract so that bugs can be
 fixed or features added.
 
 ## Roles
 
-The `FiatToken` has a number of roles (addresses) which control different
+The `CFAToken` has a number of roles (addresses) which control different
 functionality:
 
 - `masterMinter` - adds and removes minters and increases their minting
@@ -20,13 +20,13 @@ functionality:
 - `owner` - re-assign any of the roles except for `admin`
 - `admin` - upgrade the contract, and re-assign itself
 
-CENTRE will control the address of all roles except for minters, which will be
-controlled by the entities that CENTRE elects to make minters
+DUNIAPAY will control the address of all roles except for minters, which will be
+controlled by the entities that DUNIAPAY elects to make minters
 
 ## ERC-20
 
-The `FiatToken` implements the standard methods of the ERC-20 interface with
-some changes:
+The `CFAToken` implements the standard methods of the ERC-20 interface with some
+changes:
 
 - A blacklisted address will be unable to call `transfer`, `transferFrom`, or
   `approve`, and will be unable to receive tokens.
@@ -35,22 +35,22 @@ some changes:
 
 ## Issuing and Destroying tokens
 
-The Fiat Token allows multiple entities to create and destroy tokens. These
-entities will have to be members of CENTRE, and will be vetted by CENTRE before
-they are allowed to create new tokens. CENTRE will not mint any tokens itself,
-it will approve members to mint and burn tokens.
+The CFA Token allows multiple entities to create and destroy tokens. These
+entities will have to be members of DUNIAPAY, and will be vetted by DUNIAPAY
+before they are allowed to create new tokens. DUNIAPAY will not mint any tokens
+itself, it will approve members to mint and burn tokens.
 
-Each `minter` has a `mintingAllowance`, which CENTRE configures. The
+Each `minter` has a `mintingAllowance`, which DUNIAPAY configures. The
 `mintingAllowance` is how many tokens that minter may issue, and as a `minter`
-issues tokens, its `mintingAllowance` declines. CENTRE will periodically reset
+issues tokens, its `mintingAllowance` declines. DUNIAPAY will periodically reset
 the `mintingAllowance` as long as a `minter` remains in good standing with
-CENTRE and maintains adequate reserves for the tokens it has issued. The
+DUNIAPAY and maintains adequate reserves for the tokens it has issued. The
 `mintingAllowance` is to limit the damage if any particular `minter` is
 compromised.
 
 ### Adding Minters
 
-CENTRE adds minters via the `configureMinter` method. When a minter is
+DUNIAPAY adds minters via the `configureMinter` method. When a minter is
 configured a `mintingAllowance` is specified, which is the number of tokens that
 address is allowed to mint. As a `minter` mints tokens, the `mintingAllowance`
 will decline.
@@ -60,12 +60,12 @@ will decline.
 ### Resetting Minting Allowance
 
 The `minters` will need their allowance reset periodically to allow them to
-continue minting. When a `minter`'s allowance is low, CENTRE can make another
+continue minting. When a `minter`'s allowance is low, DUNIAPAY can make another
 call to `configureMinter` to reset the `mintingAllowance` to a higher value.
 
 ### Removing Minters
 
-CENTRE removes minters via the `removeMinter` method. This will remove the
+DUNIAPAY removes minters via the `removeMinter` method. This will remove the
 `minter` from the list of `minters` and set its `mintingAllowance` to 0. Once a
 `minter` is removed it will no longer be able to mint or burn tokens.
 
@@ -115,15 +115,15 @@ tokens, approve, mint, or burn tokens.
 
 ### Adding a blacklisted address
 
-CENTRE blacklists an address via the `blacklist` method. The specified `account`
-will be added to the blacklist.
+DUNIAPAY blacklists an address via the `blacklist` method. The specified
+`account` will be added to the blacklist.
 
 - Only the `blacklister` role may call `blacklist`.
 - Blacklisting emits a `Blacklist(account)` event
 
 ### Removing a blacklisted address
 
-CENTRE removes an address from the blacklist via the `unblacklist` method. The
+DUNIAPAY removes an address from the blacklist via the `unblacklist` method. The
 specified `account` will be removed from the blacklist.
 
 - Only the `blacklister` role may call `unblacklist`.
@@ -136,12 +136,12 @@ serious key compromise. All transfers, minting, burning, and adding minters will
 be prevented while the contract is paused. Other functionality, such as
 modifying the blacklist, removing minters, changing roles, and upgrading will
 remain operational as those methods may be required to fix or mitigate the issue
-that caused CENTRE to pause the contract.
+that caused DUNIAPAY to pause the contract.
 
 ### Pause
 
-CENTRE will pause the contract via the `pause` method. This method will set the
-paused flag to true.
+DUNIAPAY will pause the contract via the `pause` method. This method will set
+the paused flag to true.
 
 - Only the `pauser` role may call pause.
 
@@ -149,9 +149,9 @@ paused flag to true.
 
 ### Unpause
 
-CENTRE will unpause the contract via the `unpause` method. This method will set
-the `paused` flag to false. All functionality will be restored when the contract
-is unpaused.
+DUNIAPAY will unpause the contract via the `unpause` method. This method will
+set the `paused` flag to false. All functionality will be restored when the
+contract is unpaused.
 
 - Only the `pauser` role may call unpause.
 
@@ -159,16 +159,16 @@ is unpaused.
 
 ## Upgrading
 
-The Fiat Token uses the zeppelinos Unstructured-Storage Proxy pattern
+The CFA Token uses the zeppelinos Unstructured-Storage Proxy pattern
 [https://docs.zeppelinos.org/docs/upgradeability_AdminUpgradeabilityProxy.html].
-[FiatTokenV1.sol](../contracts/FiatTokenV1.sol) is the implementation, the
-actual token will be a Proxy contract
-([FiatTokenProxy.sol](../contracts/FiatTokenProxy.sol)) which will forward all
-calls to `FiatToken` via delegatecall. This pattern allows CENTRE to upgrade the
-logic of any deployed tokens seamlessly.
+[CFATokenV1.sol](../contracts/CFATokenV1.sol) is the implementation, the actual
+token will be a Proxy contract
+([CFATokenProxy.sol](../contracts/CFATokenProxy.sol)) which will forward all
+calls to `CFAToken` via delegatecall. This pattern allows DUNIAPAY to upgrade
+the logic of any deployed tokens seamlessly.
 
-- CENTRE will upgrade the token via a call to `upgradeTo` or `upgradeToAndCall`
-  if initialization is required for the new version.
+- DUNIAPAY will upgrade the token via a call to `upgradeTo` or
+  `upgradeToAndCall` if initialization is required for the new version.
 - Only the `admin` role may call `upgradeTo` or `upgradeToAndCall`.
 
 ## Reassigning Roles

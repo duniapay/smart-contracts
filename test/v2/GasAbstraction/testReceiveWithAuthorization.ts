@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import { FiatTokenV2Instance } from "../../../@types/generated";
+import { CfaTokenV2Instance } from "../../../@types/generated";
 import {
   AuthorizationUsed,
   Transfer,
-} from "../../../@types/generated/FiatTokenV2";
+} from "../../../@types/generated/CFATokenV2";
 import { ACCOUNTS_AND_KEYS, MAX_UINT256 } from "../../helpers/constants";
 import { expectRevert, hexStringFromBuffer } from "../../helpers";
 import {
@@ -15,11 +15,11 @@ import {
 export function testReceiveWithAuthorization({
   getFiatToken,
   getDomainSeparator,
-  fiatTokenOwner,
+  cfaTokenOwner,
   accounts,
 }: TestParams): void {
   describe("receiveWithAuthorization", () => {
-    let fiatToken: FiatTokenV2Instance;
+    let cfaToken: CfaTokenV2Instance;
     let domainSeparator: string;
     const [alice, charlie] = ACCOUNTS_AND_KEYS;
     const [, bob, david] = accounts;
@@ -35,19 +35,19 @@ export function testReceiveWithAuthorization({
     };
 
     beforeEach(async () => {
-      fiatToken = getFiatToken();
+      cfaToken = getFiatToken();
       domainSeparator = getDomainSeparator();
       nonce = hexStringFromBuffer(crypto.randomBytes(32));
-      await fiatToken.configureMinter(fiatTokenOwner, 1000000e6, {
-        from: fiatTokenOwner,
+      await cfaToken.configureMinter(cfaTokenOwner, 1000000e6, {
+        from: cfaTokenOwner,
       });
-      await fiatToken.mint(receiveParams.from, initialBalance, {
-        from: fiatTokenOwner,
+      await cfaToken.mint(receiveParams.from, initialBalance, {
+        from: cfaTokenOwner,
       });
     });
 
     it("has the expected type hash", async () => {
-      expect(await fiatToken.RECEIVE_WITH_AUTHORIZATION_TYPEHASH()).to.equal(
+      expect(await cfaToken.RECEIVE_WITH_AUTHORIZATION_TYPEHASH()).to.equal(
         receiveWithAuthorizationTypeHash
       );
     });
@@ -68,14 +68,14 @@ export function testReceiveWithAuthorization({
       );
 
       // check initial balance
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(10e6);
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(0);
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(10e6);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(0);
 
       // check that the authorization state is false
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(false);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(false);
 
       // The recipient (Bob) submits the signed authorization
-      const result = await fiatToken.receiveWithAuthorization(
+      const result = await cfaToken.receiveWithAuthorization(
         from,
         to,
         value,
@@ -89,10 +89,10 @@ export function testReceiveWithAuthorization({
       );
 
       // check that balance is updated
-      expect((await fiatToken.balanceOf(from)).toNumber()).to.equal(
+      expect((await cfaToken.balanceOf(from)).toNumber()).to.equal(
         initialBalance - value
       );
-      expect((await fiatToken.balanceOf(to)).toNumber()).to.equal(value);
+      expect((await cfaToken.balanceOf(to)).toNumber()).to.equal(value);
 
       // check that AuthorizationUsed event is emitted
       const log0 = result.logs[0] as Truffle.TransactionLog<AuthorizationUsed>;
@@ -108,7 +108,7 @@ export function testReceiveWithAuthorization({
       expect(log1.args[2].toNumber()).to.equal(value);
 
       // check that the authorization state is now true
-      expect(await fiatToken.authorizationState(from, nonce)).to.equal(true);
+      expect(await cfaToken.authorizationState(from, nonce)).to.equal(true);
     });
 
     it("reverts if the caller is not the payee", async () => {
@@ -127,7 +127,7 @@ export function testReceiveWithAuthorization({
 
       // submit the signed authorization from
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -159,7 +159,7 @@ export function testReceiveWithAuthorization({
 
       // try to cheat by claiming the transfer amount is double
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value * 2, // pass incorrect value
@@ -193,7 +193,7 @@ export function testReceiveWithAuthorization({
       // try to cheat by submitting the signed authorization that is signed by
       // a wrong person
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -227,7 +227,7 @@ export function testReceiveWithAuthorization({
 
       // try to submit the authorization early
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -260,7 +260,7 @@ export function testReceiveWithAuthorization({
 
       // try to submit the authorization that is expired
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -292,7 +292,7 @@ export function testReceiveWithAuthorization({
       );
 
       // submit the authorization
-      await fiatToken.receiveWithAuthorization(
+      await cfaToken.receiveWithAuthorization(
         from,
         to,
         value,
@@ -307,7 +307,7 @@ export function testReceiveWithAuthorization({
 
       // try to submit the authorization again
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -338,7 +338,7 @@ export function testReceiveWithAuthorization({
       );
 
       // submit the authorization
-      await fiatToken.receiveWithAuthorization(
+      await cfaToken.receiveWithAuthorization(
         from,
         to,
         value,
@@ -366,7 +366,7 @@ export function testReceiveWithAuthorization({
 
       // try to submit the authorization again
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           1e6,
@@ -400,7 +400,7 @@ export function testReceiveWithAuthorization({
 
       // try to submit the authorization with invalid transfer parameters
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -431,11 +431,11 @@ export function testReceiveWithAuthorization({
       );
 
       // pause the contract
-      await fiatToken.pause({ from: fiatTokenOwner });
+      await cfaToken.pause({ from: cfaTokenOwner });
 
       // try to submit the authorization
       await expectRevert(
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -466,10 +466,10 @@ export function testReceiveWithAuthorization({
       );
 
       // payer is blacklisted
-      await fiatToken.blacklist(from, { from: fiatTokenOwner });
+      await cfaToken.blacklist(from, { from: cfaTokenOwner });
 
       const submitTx = () =>
-        fiatToken.receiveWithAuthorization(
+        cfaToken.receiveWithAuthorization(
           from,
           to,
           value,
@@ -486,8 +486,8 @@ export function testReceiveWithAuthorization({
       await expectRevert(submitTx(), "account is blacklisted");
 
       // payee is blacklisted
-      await fiatToken.unBlacklist(from, { from: fiatTokenOwner });
-      await fiatToken.blacklist(to, { from: fiatTokenOwner });
+      await cfaToken.unBlacklist(from, { from: cfaTokenOwner });
+      await cfaToken.blacklist(to, { from: cfaTokenOwner });
 
       // try to submit the authorization
       await expectRevert(submitTx(), "account is blacklisted");

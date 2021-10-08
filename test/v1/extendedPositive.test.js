@@ -10,7 +10,7 @@ const {
   minterAccount,
   pauserAccount,
   initializeTokenWithProxy,
-  UpgradedFiatToken,
+  UpgradedCFAToken,
   upgradeTo,
 } = require("./helpers/tokenTest");
 
@@ -112,7 +112,7 @@ function runTests(newToken, _accounts) {
   });
 
   it("ept008 should upgrade while paused", async () => {
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
     await token.pause({ from: pauserAccount });
     const tokenConfig = await upgradeTo(proxy, newRawToken);
     const newProxiedToken = tokenConfig.token;
@@ -248,7 +248,7 @@ function runTests(newToken, _accounts) {
 
   it("ept022 should upgrade when msg.sender blacklisted", async () => {
     await token.blacklist(upgraderAccount, { from: blacklisterAccount });
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
     const tokenConfig = await upgradeTo(proxy, newRawToken);
     const newProxiedToken = tokenConfig.token;
 
@@ -260,7 +260,7 @@ function runTests(newToken, _accounts) {
   });
 
   it("ept023 should upgrade to blacklisted address", async () => {
-    const newRawToken = await UpgradedFiatToken.new();
+    const newRawToken = await UpgradedCFAToken.new();
 
     await token.blacklist(newRawToken.address, { from: blacklisterAccount });
     const tokenConfig = await upgradeTo(proxy, newRawToken);
@@ -496,4 +496,4 @@ function runTests(newToken, _accounts) {
   });
 }
 
-wrapTests("FiatToken extended positive", runTests);
+wrapTests("CFAToken extended positive", runTests);
