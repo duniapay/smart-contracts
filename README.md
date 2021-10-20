@@ -1,6 +1,6 @@
-# centre-tokens
+# Tokens
 
-CFA tokens on the [DUNIAPAY](https://duniapay.net) network.
+CFA tokens on the [Celo](https://celo.org) Blockchain.
 
 ## Setup
 
