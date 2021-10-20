@@ -24,7 +24,7 @@ pragma solidity 0.6.12;
 
 import "./Controller.sol";
 import "./MinterManagementInterface.sol";
-import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
+import { SafeMath } from "../libraries/SafeMath.sol";
 
 /**
  * @title MintController

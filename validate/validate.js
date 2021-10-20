@@ -1,8 +1,8 @@
 // Address of the CFAToken Implementation
-const cfaTokenAddress = "0x96a501B69A178D0031Dd7333AE829773220E514C";
+const cfaTokenAddress = "0xf48482B0a52579Da19d0DA84947623E9f9524a0C";
 
 // Address of the CFAToken Proxy
-const cfaTokenProxyAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+const cfaTokenProxyAddress = "0x5b293Be7fD8Ce15b0483E6d1cd3D568aCdADc753";
 
 // role addresses
 const MASTER_MINTER = 0x1500a138523709ce66c8b9abe678abc1b6c5a7b7;

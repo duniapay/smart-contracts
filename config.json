@@ -1,0 +1,4 @@
+{
+  "inputFilePath": "./contracts/v1/*.sol",
+  "outputDir": "./build/"
+}

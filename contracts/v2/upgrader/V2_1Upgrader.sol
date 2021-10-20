@@ -24,8 +24,8 @@
 
 pragma solidity 0.6.12;
 
-import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeMath } from "../../libraries/SafeMath.sol";
+import { IERC20 } from "../../libraries/IERC20.sol";
 import { Ownable } from "../../v1/Ownable.sol";
 import { CFATokenV2_1 } from "../CFATokenV2_1.sol";
 import { CFATokenProxy } from "../../v1/CFATokenProxy.sol";

@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20 } from "../libraries/IERC20.sol";
 
 abstract contract AbstractCFATokenV1 is IERC20 {
     function _approve(

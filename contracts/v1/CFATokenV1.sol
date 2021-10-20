@@ -24,7 +24,7 @@
 
 pragma solidity 0.6.12;
 
-import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
+import { SafeMath } from "../libraries/SafeMath.sol";
 import { AbstractCFATokenV1 } from "./AbstractCFATokenV1.sol";
 import { Ownable } from "./Ownable.sol";
 import { Pausable } from "./Pausable.sol";

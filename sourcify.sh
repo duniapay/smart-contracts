@@ -10,12 +10,14 @@ ROOTDIR="$(pwd)/$(dirname $0)"
 SOURCES_DIR=$ROOTDIR/sources-flattened-dir
 
 mkdir -p "$SOURCES_DIR"
-cp -R contracts/uniswapv2/ $SOURCES_DIR/contracts/
+cp -R contracts/v1 $SOURCES_DIR/
+
 
 CONTRACTS=(
-    "contracts/v1/CFATokenV1.sol"
-    "contracts/v1/CFATokenProxy.sol"
-    "contracts/CFATokenV2.sol"
+    "contracts/CFATokenV1.sol"
+    # "contracts/v1/CFATokenProxy.sol"
+    # "contracts/v2/CFATokenV2.sol"
+    # "contracts/minting/MasterMinter.sol"
 )
 
 for CONTRACT in ${CONTRACTS[@]}; do
