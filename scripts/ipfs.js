@@ -33,7 +33,7 @@ async function main() {
     const cod = await ipfs.add(artifact.source);
     index++;
     log(`source: ${cod.cid}`);
-    const pair = ["2", "4", "6", "8", "10", "14", "16", "18"]
+    const pair = ["2", "4", "6", "8", "10", "14", "16", "18"];
     if (pair.includes(index.toString())) {
       await sleep(8000);
     }
