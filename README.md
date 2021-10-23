@@ -1,8 +1,10 @@
 # Tokens
 
-CFA tokens on the [Celo](https://celo.org) Blockchain.
+CFA tokens on the [Celo](https://explorer.celo.org/address/0xE12F89E8a59225DAAd07E1B88be31BFe167a26ff) Blockchain. 
 
-## Setup
+Introducing Eco protocol, an attempt at building a decentralized central bank powered by a native stablecoin called Eco (or cXOF). cXOF is a token on celo representing the XOF/XAF currencies which are used in central and Western Africa. The token or stablecoin is designed to power a range of products, like remittances, savings, lending or just regular payments.
+
+## Setup 
 
 Requirements:
 
@@ -87,10 +89,11 @@ The implementation uses 2 separate contracts - a proxy contract
 allows upgrading the contract, as a new implementation contact can be deployed
 and the Proxy updated to point to it.
 
-### CFAToken
+### CFAToken ECO 
 
 The CFAToken offers a number of capabilities, which briefly are described below.
 There are more [detailed design docs](./doc/tokendesign.md) in the `doc` folder.
+You can also find a whitepaper here https://docs.google.com/document/d/1kb_UmcOP6VuAUMUpn_emP86qjS5I48m-et6mj24VrgM/edit?usp=sharing (Draft)
 
 ### ERC20 compatible
 
