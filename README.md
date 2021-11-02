@@ -94,7 +94,7 @@ and the Proxy updated to point to it.
 The CFAToken offers a number of capabilities, which briefly are described below.
 There are more [detailed design docs](./doc/tokendesign.md) in the `doc` folder.
 
-You can also find a whitepaper here https://docs.google.com/document/d/1kb_UmcOP6VuAUMUpn_emP86qjS5I48m-et6mj24VrgM/edit?usp=sharing (Draft)
+You can also find a whitepaper [here](https://docs.google.com/document/d/1kb_UmcOP6VuAUMUpn_emP86qjS5I48m-et6mj24VrgM/edit?usp=sharing) (Draft)
 
 ### ERC20 compatible
 
