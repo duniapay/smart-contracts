@@ -20,7 +20,7 @@
     "solhint": "solhint 'contracts/**/*.sol'",
     "precommit": "yarn typechain && yarn fmt && yarn typecheck && yarn lint && yarn solhint",
     "slither": "slither --solc-disable-warnings --disable-color --exclude-dependencies .",
-    "migrate": "truffle compile --all && npm run ipfs && truffle migrate --interactive --network alfajores",
+    "migrate": "truffle compile --all && truffle migrate --interactive --network alfajores",
     "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
   },
   "repository": {

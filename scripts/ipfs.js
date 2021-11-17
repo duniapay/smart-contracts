@@ -14,7 +14,7 @@ async function main() {
     host: "ipfs.infura.io",
     port: "5001",
     protocol: "https",
-    timeout: "2m",
+    timeout: "10m",
   });
 
   const artifactPaths = shell.ls("./build/contracts/*.json");

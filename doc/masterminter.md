@@ -12,7 +12,7 @@ for warm transactions.
 Minters and CFAToken holders are not affected by replacing a `masterMinter` user
 address with a `MasterMinter` contract.
 
-# Roles
+## Roles
 
 The `MasterMinter` contract has the following roles:
 
@@ -29,7 +29,7 @@ The `MasterMinter` contract has the following roles:
   cannot perform any actions on the MasterMinter contract. It interacts only
   with the CFAToken contract.
 
-# Interaction with CFAToken contract
+## Interaction with CFAToken contract
 
 The `owner` of the CFAToken contract can set the `masterMinter` role to point to
 the address of the `MasterMinter` contract. This enables the `MasterMinter`
@@ -52,7 +52,7 @@ When a `controller` calls a function on `MasterMinter`, the `MasterMinter` will
 call the appropriate function on the `CFAToken` contract on its behalf. Both the
 `MasterMinter` and the `CFAToken` do their own access control.
 
-# Function Summary
+## Function Summary
 
 - `configureController(controller, minter)` - The owner assigns the controller
   to manage the minter. This allows the `controller` to call `configureMinter`,
@@ -78,7 +78,7 @@ call the appropriate function on the `CFAToken` contract on its behalf. Both the
 - `removeMinter` - A controller disables a `minter`. The `MasterMinter` contract
   will call the `minterManager` contract on the `controller`'s behalf.
 
-# Deployment
+## Deployment
 
 The `MasterMinter` may be deployed independently of the `CFAToken` contract
 (e.g. CXOF).
@@ -96,7 +96,7 @@ The `MasterMinter` may be deployed independently of the `CFAToken` contract
   contract in the constructor. Next, use the `MasterMinter` `owner` to set the
   `minterManager` and configure `controllers`.
 
-# Configuring the MasterMinter
+## Configuring the MasterMinter
 
 We recommend assigning at least <b>two</b> `controllers` to each `minter`.
 
@@ -116,7 +116,7 @@ will cause all future `incrementMinterAllowance` transactions to `throw`. Since
 the two types of transactions are managed by different addresses, there is no
 need to worry about nonce management.
 
-# MasterMinter vs. MintController
+## MasterMinter vs. MintController
 
 Creating a `MasterMinter` contract that _inherits_ from a `MintController`
 contract with no changes may seem like a curious design choice. This leaves open

@@ -18,3 +18,4 @@ yarn-error.log
 @types/generated/
 config.js
 networks.config.json
+.env
