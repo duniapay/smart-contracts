@@ -3926,10 +3926,10 @@ bip32@2.0.5, bip32@^2.0.5:
     typeforce "^1.11.5"
     wif "^2.0.6"
 
-bip39@^3.0.2, "bip39@git+https://github.com/bitcoinjs/bip39.git#d8ea080a18b40f301d4e2219a2991cd2417e83c2":
+bip39@^3.0.2, "bip39@https://github.com/bitcoinjs/bip39#d8ea080a18b40f301d4e2219a2991cd2417e83c2":
   version "3.0.3"
-  resolved "git+ssh://git@github.com/bitcoinjs/bip39.git#d8ea080a18b40f301d4e2219a2991cd2417e83c2"
-  integrity sha512-I2ADywus8maO/BPS8eEULUXS20kQYJQ+/W0MxSEkEUGP+nj58ZYUL0i7BWSRdKwjQxLU8fEchj5p2JqhCVBltg==
+  uid d8ea080a18b40f301d4e2219a2991cd2417e83c2
+  resolved "https://github.com/bitcoinjs/bip39#d8ea080a18b40f301d4e2219a2991cd2417e83c2"
   dependencies:
     "@types/node" "11.11.6"
     create-hash "^1.1.0"
@@ -3978,10 +3978,10 @@ blob-to-it@^1.0.1:
   dependencies:
     browser-readablestream-to-it "^1.0.3"
 
-"bls12377js@git+https://github.com/celo-org/bls12377js.git#cb38a4cfb643c778619d79b20ca3e5283a2122a6":
+"bls12377js@https://github.com/celo-org/bls12377js#cb38a4cfb643c778619d79b20ca3e5283a2122a6":
   version "0.1.0"
-  resolved "git+ssh://git@github.com/celo-org/bls12377js.git#cb38a4cfb643c778619d79b20ca3e5283a2122a6"
-  integrity sha512-genS+AxHQKkrKA2xa1C1HCzSlZM8S/ZQEnjqET9u78/fpbHrNbXWvFYypYA3h7ukTD+WpF0hh+S9yxH6mhx4iA==
+  uid cb38a4cfb643c778619d79b20ca3e5283a2122a6
+  resolved "https://github.com/celo-org/bls12377js#cb38a4cfb643c778619d79b20ca3e5283a2122a6"
   dependencies:
     "@stablelib/blake2xs" "0.10.4"
     "@types/node" "^12.11.7"
@@ -4990,9 +4990,9 @@ cookie@0.4.0:
   integrity sha512-+Hp8fLp57wnUSt0tY0tHEXh4voZRDnoIrZPqlo3DPiI4y9lwg/jqx+1Om94/W6ZaPDOUbnjOt/99w66zk+l1Xg==
 
 cookiejar@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.npmjs.org/cookiejar/-/cookiejar-2.1.2.tgz"
-  integrity sha512-Mw+adcfzPxcPeI+0WlvRrr/3lGVO0bD75SxX6811cxSh1Wbxx7xZBGK1eVtDf6si8rg2lhnUjsVLMFMfbRIuwA==
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.4.tgz#ee669c1fea2cf42dc31585469d193fef0d65771b"
+  integrity sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==
 
 copy-descriptor@^0.1.0:
   version "0.1.1"
